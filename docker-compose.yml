@@ -1,0 +1,89 @@
+version: '3.8'
+services:
+  # User Service MySQL
+  user-db:
+    image: mysql:8.0
+    container_name: user_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - "3306:3306"
+    networks:
+      - reciphub-network
+
+  # Recipe Service MySQL
+  recipe-db:
+    image: mysql:8.0
+    container_name: recipe_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: recipe_db
+      MYSQL_USER: recipe
+      MYSQL_PASSWORD: recipepassword
+    ports:
+      - "3307:3306"
+    networks:
+      - reciphub-network
+
+  # Ingredient Service MySQL
+  ingredient-db:
+    image: mysql:8.0
+    container_name: ingredient_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ingredient_db
+      MYSQL_USER: ingredient
+      MYSQL_PASSWORD: ingredientpassword
+    ports:
+      - "3308:3306"
+    networks:
+      - reciphub-network
+
+  # Category Service MySQL
+  category-db:
+    image: mysql:8.0
+    container_name: category_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: category_db
+      MYSQL_USER: category
+      MYSQL_PASSWORD: categorypassword
+    ports:
+      - "3309:3306"
+    networks:
+      - reciphub-network
+
+  # Rating & Comment Service MySQL
+  rating-comment-db:
+    image: mysql:8.0
+    container_name: rating_comment_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: rating_comment_db
+      MYSQL_USER: rating_comment
+      MYSQL_PASSWORD: ratingcommentpassword
+    ports:
+      - "3310:3306"
+    networks:
+      - reciphub-network
+
+  # Search Service MySQL
+  search-db:
+    image: mysql:8.0
+    container_name: search_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: search_db
+      MYSQL_USER: search
+      MYSQL_PASSWORD: searchpassword
+    ports:
+      - "3311:3306"
+    networks:
+      - reciphub-network
+
+networks:
+  reciphub-network:
+    driver: bridge
