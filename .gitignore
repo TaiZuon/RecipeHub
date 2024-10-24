@@ -1,6 +1,7 @@
 /.idea
 /.github
 
+.env
 # Compiled class file
 *.class
 

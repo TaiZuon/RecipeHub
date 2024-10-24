@@ -20,6 +20,7 @@ public class UserController {
 
     @PostMapping("/users/{id}")
     Optional<User> findUserById(@PathVariable("id") String id) {
+        System.out.println("Hello ");
         return userService.findUserById(id);
     }
 
