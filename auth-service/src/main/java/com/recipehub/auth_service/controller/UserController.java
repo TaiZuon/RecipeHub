@@ -19,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}")
-    Optional<User> findUserById(@PathVariable("id") String id) {
+    User findUserById(@PathVariable("id") String id) {
         return userService.findUserById(id);
     }
 
