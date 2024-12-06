@@ -2,10 +2,12 @@ package com.recipehub.auth_service.repository;
 
 import com.recipehub.auth_service.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import java.util.Optional;
+import java.util.List;
 
-@Repository
-public interface UserRepository extends JpaRepository <User, String> {
-    Optional<User> findByUsername(String username);
+public interface UserRepository extends JpaRepository<User, Long> {
+    // Tìm kiếm người dùng theo username
+    User findByUsername(String username);
+
+    // Liệt kê tất cả người dùng (đã có phương thức này trong JpaRepository)
+    List<User> findAll();  // Không cần thêm gì vì JpaRepository đã cung cấp phương thức này
 }
