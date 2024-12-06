@@ -1,55 +1,50 @@
 import React, { useState } from "react";
-import { Container, TextField, Button, Box, Typography } from "@mui/material";
-import axios from "axios";
+import { Form, Input, Button, message } from "antd";
+import axios from "../axios";
 
-const Login = () => {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
-      const response = await axios.post("/api/auth/login", { email, password });
-      console.log("Login successful:", response.data);
+      const response = await axios.post("/login", { email, password });
+      localStorage.setItem("token", response.data.token);
+      message.success("Login successful");
     } catch (error) {
-      console.error("Login failed:", error.response?.data || error.message);
+      message.error("Login failed");
     }
   };
 
   return (
-    <Container>
-      <Box sx={{ maxWidth: 400, margin: "auto", marginTop: 4 }}>
-        <Typography variant="h5" textAlign="center">
-          Login
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Email"
-            fullWidth
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            fullWidth
-            margin="normal"
+    <div>
+      <h2>Login</h2>
+      <Form onFinish={handleSubmit}>
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[{ required: true, type: "email" }]}
+        >
+          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true }]}
+        >
+          <Input.Password
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ marginTop: 2 }}
-          >
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
             Login
           </Button>
-        </form>
-      </Box>
-    </Container>
+        </Form.Item>
+      </Form>
+    </div>
   );
-};
+}
 
 export default Login;
