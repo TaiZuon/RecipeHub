@@ -1,17 +1,23 @@
+// src/components/Home.js
 import React from "react";
-import { Typography, Container, Box } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Button } from "antd";
 
-const Home = () => {
+function Home() {
   return (
-    <Container>
-      <Box sx={{ textAlign: "center", marginTop: 4 }}>
-        <Typography variant="h4">Welcome to RecipeHub!</Typography>
-        <Typography variant="body1" sx={{ marginTop: 2 }}>
-          Discover and share your favorite recipes.
-        </Typography>
-      </Box>
-    </Container>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>Welcome to RecipeHub</h1>
+      <p>Discover and share your favorite recipes.</p>
+      <div>
+        <Button type="primary" style={{ marginRight: "10px" }}>
+          <Link to="/login">Login</Link>
+        </Button>
+        <Button type="default">
+          <Link to="/register">Register</Link>
+        </Button>
+      </div>
+    </div>
   );
-};
+}
 
 export default Home;
