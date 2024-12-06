@@ -12,5 +12,19 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-  server:
-    port: 8081
+aws:
+  access:
+    key:
+      id: ${AWS_ACCESS_KEY_ID}
+  secret:
+    access:
+      key: ${AWS_SECRET_ACCESS_KEY}
+  s3:
+    region: ${AWS_S3_REGION}
+    bucket: ${AWS_S3_BUCKET}
+  default_avatar_url: ${DEFAULT_AVATAR_URL}
+  default_recipe_url: ${DEFAULT_RECIPE_URL}
+server:
+  port: 8081
+app:
+  recipe: http://localhost:8082
