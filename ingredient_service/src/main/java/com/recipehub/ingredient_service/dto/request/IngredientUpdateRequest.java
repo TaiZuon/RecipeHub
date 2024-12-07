@@ -2,19 +2,19 @@ package com.recipehub.ingredient_service.dto.request;
 
 import com.recipehub.ingredient_service.Enum.UnitType;
 import com.recipehub.ingredient_service.dto.IngredientImageDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class IngredientRequest {
+public class IngredientUpdateRequest {
     private String name;
     private UnitType unit;
-    private List<IngredientImageDto> imageUrls;
+
+    private List<IngredientImageDto> ingredientImages;
+    private List<String> newImages;
+
+    public boolean hasNewImages() {
+        return newImages != null && newImages.isEmpty();
+    }
 }

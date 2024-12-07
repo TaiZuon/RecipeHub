@@ -10,7 +10,6 @@ import com.recipehub.ingredient_service.mapper.IngredientMapper;
 import com.recipehub.ingredient_service.model.Ingredient;
 import com.recipehub.ingredient_service.model.IngredientImage;
 import com.recipehub.ingredient_service.repository.IngredientRepository;
-
 import com.recipehub.ingredient_service.service.IngredientService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
