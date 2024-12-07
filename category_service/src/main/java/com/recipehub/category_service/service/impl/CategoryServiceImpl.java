@@ -45,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategory(UUID categoryId, CategoryRequest updatedCategory) throws Exception {
+    public Category updateCategory(Long categoryId, CategoryRequest updatedCategory) throws Exception {
         return categoryRepository.findById(categoryId)
                 .map(category -> {
                     category.setCategoryType(updatedCategory.getCategoryType());

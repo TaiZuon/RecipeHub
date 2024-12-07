@@ -1,5 +1,6 @@
 package com.recipehub.auth_service.controller;
 
+import com.recipehub.auth_service.dto.request.UserCreationRequest;
 import com.recipehub.auth_service.entity.User;
 import com.recipehub.auth_service.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +23,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        String password = request.get("password");
-        String role = request.get("role");
+    public ResponseEntity<?> register(@RequestBody UserCreationRequest request) {
 
-        if (username == null || password == null || role == null) {
+        if (request.getUsername() == null || request.getPassword() == null || request.getRole() == null) {
             return ResponseEntity.badRequest().body("Username, Password và Role là bắt buộc");
         }
 
-        boolean success = userService.registerUser(username, password, role);
+        boolean success = userService.registerUser(request);
         if (!success) {
             return ResponseEntity.badRequest().body("Username đã tồn tại hoặc Role không hợp lệ");
         }

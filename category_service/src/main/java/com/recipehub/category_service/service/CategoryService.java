@@ -13,7 +13,7 @@ public interface CategoryService {
 
     List<Category> getAllCategories();
 
-    Category updateCategory(UUID categoryId, CategoryRequest updatedCategory) throws Exception;
+    Category updateCategory(Long categoryId, CategoryRequest updatedCategory) throws Exception;
 
     void deleteCategory(CategoryRequest request) throws Exception;
 }
