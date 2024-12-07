@@ -1,20 +1,21 @@
-package com.recipehub.ingredient_service.dto.request;
+package com.recipehub.ingredient_service.dto;
 
 import com.recipehub.ingredient_service.Enum.UnitType;
-import com.recipehub.ingredient_service.dto.IngredientImageDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class IngredientRequest {
+@NoArgsConstructor
+public class IngredientDto {
+    private UUID id;
     private String name;
     private UnitType unit;
-    private List<IngredientImageDto> imageUrls;
+    private List<IngredientImageDto> ingredientImages;
 }

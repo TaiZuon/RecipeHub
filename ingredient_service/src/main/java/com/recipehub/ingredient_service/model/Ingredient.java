@@ -3,9 +3,11 @@ package com.recipehub.ingredient_service.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.recipehub.ingredient_service.Enum.UnitType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +19,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Ingredient {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "name", nullable = false)
     private String name;
