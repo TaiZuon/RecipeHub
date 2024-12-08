@@ -1,6 +1,7 @@
 package com.recipehub.auth_service.service;
 
 import com.recipehub.auth_service.dto.request.UserCreationRequest;
+import com.recipehub.auth_service.dto.response.UserResponse;
 import com.recipehub.auth_service.entity.User;
 import com.recipehub.auth_service.entity.UserRole;
 import com.recipehub.auth_service.mapper.ProfileMapper;
@@ -57,6 +58,11 @@ public class UserService {
     public String getUserId(String username) {
         User user = userRepository.findByUsername(username);
         return user != null ? String.valueOf(user.getId()) : null;  // Chuyển đổi Long thành String
+    }
+
+    public UserResponse getUserById(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null ? userMapper.toUserResponse(user) : null;
     }
 
     // Phương thức lấy thông tin role của người dùng

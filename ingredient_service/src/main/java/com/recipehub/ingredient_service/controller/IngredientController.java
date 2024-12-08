@@ -26,7 +26,7 @@ public class IngredientController {
     private static final Logger logger = LoggerFactory.getLogger(IngredientController.class);
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientDto> getIngredient(@PathVariable UUID id) throws Exception {
+    public ResponseEntity<IngredientDto> getIngredient(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(ingredientService.getIngredient(id));
     }
 
@@ -68,13 +68,13 @@ public class IngredientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientDto> updateIngredient(@PathVariable UUID id,
+    public ResponseEntity<IngredientDto> updateIngredient(@PathVariable Long id,
                                                           @Valid @RequestBody IngredientUpdateRequest request) throws Exception {
         return ResponseEntity.ok(ingredientService.updateIngredient(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteIngredient(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteIngredient(@PathVariable Long id) {
         ingredientService.deleteIngredient(id);
         return ResponseEntity.ok("Successfully deleted ingredient id " + id);
     }

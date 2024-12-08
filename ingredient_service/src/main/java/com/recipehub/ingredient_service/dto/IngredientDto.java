@@ -14,8 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class IngredientDto {
-    private UUID id;
+    private Long id;
     private String name;
-    private UnitType unit;
     private List<IngredientImageDto> ingredientImages;
 }

@@ -74,6 +74,7 @@ public enum ErrorCode {
     RECIPE_ALREADY_LISTED(8006, "Recipe is already listed for auction"),
     RECIPE_NOT_AVAILABLE(8007, "Recipe is not available because recipe is active"),
 
+    INGREDIENT_NOT_FOUND(8008, "Ingredient not found"),
     // System errors (9xxx)
     SYSTEM_ERROR(9001, "System error occurred"),
     DATABASE_ERROR(9002, "Database error"),

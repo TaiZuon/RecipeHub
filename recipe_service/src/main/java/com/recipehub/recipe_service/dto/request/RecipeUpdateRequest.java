@@ -10,7 +10,6 @@ import java.util.Set;
 public class RecipeUpdateRequest {
     private String title;
     private String description;
-    private String instructions;
 
     private List<RecipeImageDto> recipeImages;
     private List<String> newImages;

@@ -1,6 +1,6 @@
-package com.recipehub.category_service.dto.response;
+package com.recipehub.recipe_service.dto.response;
 
-import com.recipehub.category_service.Enum.CategoryType;
+import com.recipehub.recipe_service.Enum.CategoryType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

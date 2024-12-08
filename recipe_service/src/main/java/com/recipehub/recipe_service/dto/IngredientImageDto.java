@@ -9,7 +9,8 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class RecipeImageDto {
+public class IngredientImageDto {
     private String imageUrl;
     private Boolean isPrimary;
+
 }

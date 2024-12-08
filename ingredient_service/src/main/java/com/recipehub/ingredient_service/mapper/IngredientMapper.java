@@ -36,7 +36,6 @@ public class IngredientMapper {
 //                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         Ingredient ingredient = new Ingredient();
         ingredient.setName(request.getName());
-        ingredient.setUnit(request.getUnit());
 
         return ingredient;
     }
@@ -46,7 +45,6 @@ public class IngredientMapper {
         IngredientDto ingredientDto = new IngredientDto();
         ingredientDto.setId(ingredient.getId());
         ingredientDto.setName(ingredient.getName());
-        ingredientDto.setUnit(ingredient.getUnit());
 
 
         List<IngredientImage> ingredientImages = ingredient.getIngredientImages();

@@ -15,6 +15,5 @@ import java.util.List;
 @AllArgsConstructor
 public class IngredientRequest {
     private String name;
-    private UnitType unit;
     private List<IngredientImageDto> imageUrls;
 }
