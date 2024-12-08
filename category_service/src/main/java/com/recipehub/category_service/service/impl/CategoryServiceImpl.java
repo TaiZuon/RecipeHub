@@ -19,9 +19,9 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public Category findByCategoryType(String categoryType) throws Exception {
-        return categoryRepository.findByCategoryType(categoryType)
-                .orElseThrow(() -> new Exception("Category not found for type: " + categoryType));
+    public Category findById (Long id) throws Exception {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new Exception("Category not found for id: " + id));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategory(UUID categoryId, CategoryRequest updatedCategory) throws Exception {
+    public Category updateCategory(Long categoryId, CategoryRequest updatedCategory) throws Exception {
         return categoryRepository.findById(categoryId)
                 .map(category -> {
                     category.setCategoryType(updatedCategory.getCategoryType());

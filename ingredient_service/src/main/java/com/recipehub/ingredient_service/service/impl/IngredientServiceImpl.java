@@ -10,7 +10,6 @@ import com.recipehub.ingredient_service.mapper.IngredientMapper;
 import com.recipehub.ingredient_service.model.Ingredient;
 import com.recipehub.ingredient_service.model.IngredientImage;
 import com.recipehub.ingredient_service.repository.IngredientRepository;
-
 import com.recipehub.ingredient_service.service.IngredientService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class IngredientServiceImpl implements IngredientService {
     private final AmazonS3Service amazonS3Service;
 
     @Override
-    public IngredientDto getIngredient(UUID id) throws Exception {
+    public IngredientDto getIngredient(Long id) throws Exception {
         Ingredient ingredient = ingredientRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not exist ingredient id: " + id));
         return ingredientMapper.ingredientToIngredientDto(ingredient);
@@ -69,7 +68,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public void deleteIngredient(UUID ingredientId) {
+    public void deleteIngredient(Long ingredientId) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new RuntimeException("Ingredient not found"));
         ingredientRepository.deleteById(ingredientId);
@@ -77,7 +76,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     @Transactional
-    public IngredientDto updateIngredient(UUID id, IngredientUpdateRequest request) {
+    public IngredientDto updateIngredient(Long id, IngredientUpdateRequest request) {
         log.info("Updating ingredient with id: {}", id);
 
         Ingredient ingredient = findIngredientById(id);
@@ -94,12 +93,9 @@ public class IngredientServiceImpl implements IngredientService {
         if (request.getName() != null) {
             ingredient.setName(request.getName());
         }
-        if (request.getUnit() != null) {
-            ingredient.setUnit(request.getUnit());
-        }
     }
 
-    private Ingredient findIngredientById(UUID id) {
+    private Ingredient findIngredientById(Long id) {
         return ingredientRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.INGREDIENT_NOT_FOUND));
     }

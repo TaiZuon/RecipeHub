@@ -1,38 +1,51 @@
 package com.recipehub.auth_service.service;
 
+import com.recipehub.auth_service.dto.request.UserCreationRequest;
+import com.recipehub.auth_service.dto.response.UserResponse;
 import com.recipehub.auth_service.entity.User;
 import com.recipehub.auth_service.entity.UserRole;
+import com.recipehub.auth_service.mapper.ProfileMapper;
+import com.recipehub.auth_service.mapper.UserMapper;
 import com.recipehub.auth_service.repository.UserRepository;
 import com.recipehub.auth_service.entity.UserStatus; // Import enum UserStatus
+import com.recipehub.auth_service.repository.httpClient.ProfileClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final ProfileClient profileClient;
+    private final ProfileMapper profileMapper;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public boolean registerUser(String username, String password, String role) {
-        if (userRepository.findByUsername(username) != null) {
+    public boolean registerUser(UserCreationRequest request) {
+        if (userRepository.findByUsername(request.getUsername()) != null) {
             return false; // Username đã tồn tại
         }
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
+        User user = userMapper.toUser(request);
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         try {
-            user.setRole(UserRole.valueOf(role.toUpperCase())); // Chuyển đổi chuỗi role thành UserRole enum
+            user.setRole(request.getRole());
         } catch (IllegalArgumentException e) {
             return false; // Nếu chuỗi không hợp lệ, trả về false
         }
         user.setStatus(UserStatus.ACTIVE); // Mặc định người dùng có trạng thái là ACTIVE
-        userRepository.save(user);
+        user = userRepository.save(user);
+
+        var profileRequest = profileMapper.toProfileCreationRequest(request);
+        profileRequest.setUserId(user.getId());
+
+        profileClient.createProfile(profileRequest);
         return true;
     }
 
@@ -45,6 +58,11 @@ public class UserService {
     public String getUserId(String username) {
         User user = userRepository.findByUsername(username);
         return user != null ? String.valueOf(user.getId()) : null;  // Chuyển đổi Long thành String
+    }
+
+    public UserResponse getUserById(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null ? userMapper.toUserResponse(user) : null;
     }
 
     // Phương thức lấy thông tin role của người dùng

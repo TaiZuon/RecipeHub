@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CategoryService {
-    Category findByCategoryType(String categoryType) throws Exception;
+    Category findById(Long id) throws Exception;
 
     Category createCategory(CategoryRequest request);
 
     List<Category> getAllCategories();
 
-    Category updateCategory(UUID categoryId, CategoryRequest updatedCategory) throws Exception;
+    Category updateCategory(Long categoryId, CategoryRequest updatedCategory) throws Exception;
 
     void deleteCategory(CategoryRequest request) throws Exception;
 }
