@@ -9,8 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class CategoryResponse {
+    private Long id;
     private CategoryType categoryType;
-    private String name;
     private String description;
-
 }

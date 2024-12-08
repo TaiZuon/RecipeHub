@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IngredientService {
-    IngredientDto getIngredient(UUID id) throws Exception;
+    IngredientDto getIngredient(Long id) throws Exception;
     List<IngredientDto> getAllIngredients();
     Ingredient createIngredient(IngredientRequest request) throws Exception;
-    void deleteIngredient(UUID ingredientId);
-    IngredientDto updateIngredient(UUID id, IngredientUpdateRequest request);
+    void deleteIngredient(Long ingredientId);
+    IngredientDto updateIngredient(Long id, IngredientUpdateRequest request);
 //    Page<Ingredient> searchIngredients(String name, IngredientStatus status,
 //                                       int page, int size, String sortField, Sort.Direction sortDirection);
 }
