@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ingredient_service
+    name: profile_service
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -12,6 +12,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+server:
+    port: 8084
+
 aws:
   access:
     key:
@@ -24,7 +27,8 @@ aws:
     bucket: ${AWS_S3_BUCKET}
   default_avatar_url: ${DEFAULT_AVATAR_URL}
   default_recipe_url: ${DEFAULT_RECIPE_URL}
-server:
-  port: 8081
+
 app:
-  recipe: http://localhost:8082
+  services:
+    ingredient: http://localhost:8081/api/ingredients
+
