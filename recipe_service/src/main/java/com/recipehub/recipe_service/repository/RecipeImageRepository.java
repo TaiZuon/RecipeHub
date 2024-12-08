@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface RecipeImageRepository extends JpaRepository<RecipeImage, UUID> {
+public interface RecipeImageRepository extends JpaRepository<RecipeImage, Long> {
 }

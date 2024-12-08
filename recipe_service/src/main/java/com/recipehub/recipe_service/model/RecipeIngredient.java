@@ -1,5 +1,6 @@
 package com.recipehub.recipe_service.model;
 
+import com.recipehub.recipe_service.Enum.UnitType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,18 +14,20 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RecipeIngredient {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "recipe_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID recipeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipe_id", nullable = false)
+    private Recipe recipe;
 
-    @Column(name = "ingredient_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID ingredientId;
+    @Column(name = "ingredient_id", nullable = false)
+    private Long ingredientId;
 
     @Column(name = "quantity", nullable = false)
     private Double quantity;
 
-    @Column(name = "unit_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID unitId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UnitType unit;
 }

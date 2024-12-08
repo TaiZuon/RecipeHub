@@ -1,6 +1,7 @@
 package com.recipehub.auth_service.controller;
 
 import com.recipehub.auth_service.dto.request.UserCreationRequest;
+import com.recipehub.auth_service.dto.response.UserResponse;
 import com.recipehub.auth_service.entity.User;
 import com.recipehub.auth_service.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -86,5 +87,10 @@ public class AuthController {
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/{userId}")
+    public UserResponse getUserById(@PathVariable Long userId) {
+        return userService.getUserById(userId);
     }
 }

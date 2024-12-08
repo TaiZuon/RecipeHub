@@ -19,17 +19,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Recipe {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description", nullable = false)
     private String description;
-
-    @Column(name = "instructions", nullable = false, columnDefinition = "TEXT")
-    private String instructions;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -39,8 +36,9 @@ public class Recipe {
     @Column(name = "status", nullable = false)
     private RecipeStatus status;
 
-    @Column(name = "created_by", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID createdBy;
+    @Column(name = "created_by", nullable = false)
+    private Long createdBy;
+
 
 //    @OneToMany(mappedBy = "recipeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JsonManagedReference

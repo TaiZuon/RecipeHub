@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CategoryService {
-    Category findByCategoryType(String categoryType) throws Exception;
+    Category findById(Long id) throws Exception;
 
     Category createCategory(CategoryRequest request);
 

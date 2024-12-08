@@ -1,6 +1,8 @@
 package com.recipehub.category_service.controller;
 
 import com.recipehub.category_service.dto.request.CategoryRequest;
+import com.recipehub.category_service.dto.response.CategoryResponse;
+import com.recipehub.category_service.mapper.CategoryMapper;
 import com.recipehub.category_service.model.Category;
 import com.recipehub.category_service.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +19,22 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
+
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
 
-    @GetMapping("/{categoryType}")
-    public ResponseEntity<Category> getCategoryByType(@PathVariable CategoryRequest request) {
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
         try {
-            Category category = categoryService.findByCategoryType(request.getCategoryType());
-            return ResponseEntity.ok(category);
+            Category category = categoryService.findById(id);
+            CategoryResponse categoryResponse = categoryMapper.toCategoryResponse(category);
+
+            return ResponseEntity.ok(categoryResponse);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

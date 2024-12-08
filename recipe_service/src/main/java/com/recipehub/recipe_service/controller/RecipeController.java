@@ -29,7 +29,7 @@ public class RecipeController {
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
     @GetMapping("/{id}")
-    public ResponseEntity<RecipeDto> getRecipe(@PathVariable UUID id) throws Exception {
+    public ResponseEntity<RecipeDto> getRecipe(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(recipeService.getRecipe(id));
     }
 
@@ -66,24 +66,24 @@ public class RecipeController {
     @PostMapping
     public ResponseEntity<?> createRecipe(@Valid @RequestBody RecipeCreateRequest request) throws Exception {
         logger.info("Received request to create recipe: {}", request);
-        Recipe createdRecipe = recipeService.createRecipe(request);
-        return ResponseEntity.ok(recipeMapper.recipeToRecipeDto(createdRecipe));
+        RecipeDto createdRecipe = recipeService.createRecipe(request);
+        return ResponseEntity.ok((createdRecipe));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RecipeDto> updateRecipe(@PathVariable UUID id,
+    public ResponseEntity<RecipeDto> updateRecipe(@PathVariable Long id,
                                                   @Valid @RequestBody RecipeUpdateRequest request) throws Exception {
         return ResponseEntity.ok(recipeService.updateRecipe(id, request));
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<RecipeDto> updateStatus(@PathVariable UUID id, @RequestParam RecipeStatus newStatus)
+    public ResponseEntity<RecipeDto> updateStatus(@PathVariable Long id, @RequestParam RecipeStatus newStatus)
             throws Exception {
         return ResponseEntity.ok(recipeService.updateStatus(id, newStatus));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRecipe(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteRecipe(@PathVariable Long id) {
         recipeService.deleteRecipe(id);
         return ResponseEntity.ok("Successfully deleted recipe id " + id);
     }

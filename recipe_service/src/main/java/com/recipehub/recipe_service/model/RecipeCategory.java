@@ -13,12 +13,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RecipeCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "recipe_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID recipeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipe_id", nullable = false)
+    private Recipe recipe;
 
-    @Column(name = "category_id", nullable = false, columnDefinition = "BINARY(16)")
-    private UUID categoryId;
+    @Column(name = "category_id", nullable = false)
+    private Long categoryId;
 }

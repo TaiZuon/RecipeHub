@@ -7,18 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecipeDto {
-    private UUID id;
+    private Long id;
     private String title;
     private String description;
-    private String instructions;
     private RecipeStatus status;
-    private UUID createdBy;
+    private Long createdBy;
     private List<RecipeImageDto> recipeImages;
 }

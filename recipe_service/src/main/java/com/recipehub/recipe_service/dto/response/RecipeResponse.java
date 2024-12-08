@@ -7,13 +7,13 @@ import java.util.UUID;
 
 @Data
 public class RecipeResponse {
-    private UUID recipeId;
+    private Long recipeId;
     private String title;
     private String description;
     private String instructions;
     private String profileImageUrl;
     private RecipeStatus status;
-    private UUID createdBy;
+    private Long createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

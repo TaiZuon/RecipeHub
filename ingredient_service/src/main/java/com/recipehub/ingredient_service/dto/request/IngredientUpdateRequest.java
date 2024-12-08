@@ -9,7 +9,6 @@ import java.util.List;
 @Data
 public class IngredientUpdateRequest {
     private String name;
-    private UnitType unit;
 
     private List<IngredientImageDto> ingredientImages;
     private List<String> newImages;

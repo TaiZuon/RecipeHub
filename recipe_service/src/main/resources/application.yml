@@ -31,5 +31,7 @@ aws:
 app:
   services:
     ingredient: http://localhost:8081
+    auth: http://localhost:8080
+    category: http://localhost:8083
 
 

@@ -2,15 +2,15 @@ package com.recipehub.recipe_service.mapper;
 
 
 import com.recipehub.recipe_service.Enum.RecipeStatus;
+import com.recipehub.recipe_service.dto.IngredientDto;
 import com.recipehub.recipe_service.dto.RecipeDto;
 import com.recipehub.recipe_service.dto.RecipeImageDto;
 import com.recipehub.recipe_service.dto.request.RecipeCreateRequest;
-import com.recipehub.recipe_service.dto.request.RecipeRequest;
-import com.recipehub.recipe_service.exception.AppException;
-import com.recipehub.recipe_service.exception.ErrorCode;
 
+import com.recipehub.recipe_service.dto.response.RecipeIngredientResponse;
 import com.recipehub.recipe_service.model.Recipe;
 import com.recipehub.recipe_service.model.RecipeImage;
+import com.recipehub.recipe_service.model.RecipeIngredient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +43,6 @@ public class RecipeMapper {
         Recipe recipe = new Recipe();
         recipe.setTitle(request.getTitle());
         recipe.setDescription(request.getDescription());
-        recipe.setInstructions(request.getInstructions());
         recipe.setStatus(RecipeStatus.PENDING);
         recipe.setCreatedBy(request.getCreatedBy());
 
@@ -57,7 +56,6 @@ public class RecipeMapper {
         recipeDto.setId(recipe.getId());
         recipeDto.setTitle(recipe.getTitle());
         recipeDto.setDescription(recipe.getDescription());
-        recipeDto.setInstructions(recipe.getInstructions());
         recipeDto.setStatus(recipe.getStatus());
         recipeDto.setCreatedBy(recipe.getCreatedBy());
 

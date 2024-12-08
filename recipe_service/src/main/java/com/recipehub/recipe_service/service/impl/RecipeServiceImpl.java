@@ -5,14 +5,14 @@ import com.recipehub.recipe_service.Enum.RecipeStatus;
 import com.recipehub.recipe_service.dto.RecipeDto;
 import com.recipehub.recipe_service.dto.request.RecipeCreateRequest;
 import com.recipehub.recipe_service.dto.request.RecipeUpdateRequest;
+import com.recipehub.recipe_service.dto.response.UserResponse;
 import com.recipehub.recipe_service.exception.AppException;
 import com.recipehub.recipe_service.exception.ErrorCode;
-import com.recipehub.recipe_service.mapper.IngredientMapper;
 import com.recipehub.recipe_service.mapper.RecipeMapper;
 import com.recipehub.recipe_service.model.Recipe;
 import com.recipehub.recipe_service.model.RecipeImage;
 import com.recipehub.recipe_service.repository.RecipeRepository;
-import com.recipehub.recipe_service.repository.httpClient.IngredientClient;
+import com.recipehub.recipe_service.repository.httpClient.AuthClient;
 import com.recipehub.recipe_service.service.RecipeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,11 +30,10 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final RecipeMapper recipeMapper;
     private final AmazonS3Service amazonS3Service;
-    private final IngredientClient ingredientClient;
-    private final IngredientMapper ingredientMapper;
+    private final AuthClient authClient;
 
     @Override
-    public RecipeDto getRecipe(UUID id) throws Exception {
+    public RecipeDto getRecipe(Long id) throws Exception {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not exist recipe id: " + id));
         return recipeMapper.recipeToRecipeDto(recipe);
@@ -51,7 +49,11 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional
-    public Recipe createRecipe(RecipeCreateRequest request) throws Exception {
+    public RecipeDto createRecipe(RecipeCreateRequest request) throws Exception {
+        UserResponse userResponse = authClient.getUserById(request.getCreatedBy());
+        if (userResponse == null) {
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
         Recipe recipe = recipeMapper.recipeCreateToRecipe(request);
 
         // Save recipe to get its id
@@ -61,23 +63,21 @@ public class RecipeServiceImpl implements RecipeService {
             List<RecipeImage> recipeImages = new ArrayList<>();
             for (int i = 0; i < request.getImageUrls().size(); i++) {
                 RecipeImage recipeImage = new RecipeImage();
-                recipeImage.setImageUrl(request.getImageUrls().get(i));
-                recipeImage.setPrimary(i == 0);
+                recipeImage.setImageUrl(request.getImageUrls().get(i).getImageUrl());
+                recipeImage.setPrimary(request.getImageUrls().get(i).getIsPrimary());
                 recipeImage.setRecipe(recipe);
                 recipeImages.add(recipeImage);
             }
             recipe.setRecipeImages(recipeImages);
         }
-        var ingredientRequest = ingredientMapper.toIngredientCreationRequest(request);
-        var ingredientResponse = ingredientClient.createIngredient(ingredientRequest);
 
 
-        return recipeRepository.save(recipe);
+        return recipeMapper.recipeToRecipeDto(recipeRepository.save(recipe));
     }
 
     @Override
     @Transactional
-    public void deleteRecipe(UUID recipeId) {
+    public void deleteRecipe(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
 
@@ -116,7 +116,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional
-    public RecipeDto updateRecipe(UUID id, RecipeUpdateRequest request) {
+    public RecipeDto updateRecipe(Long id, RecipeUpdateRequest request) {
         log.info("Updating recipe with id: {}", id);
 
         Recipe recipe = findRecipeById(id);
@@ -138,12 +138,9 @@ public class RecipeServiceImpl implements RecipeService {
         if (request.getDescription() != null) {
             recipe.setDescription(request.getDescription());
         }
-        if (request.getInstructions() != null) {
-            recipe.setInstructions(request.getInstructions());
-        }
     }
 
-    private Recipe findRecipeById(UUID id) {
+    private Recipe findRecipeById(Long id) {
         return recipeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.RECIPE_NOT_FOUND));
     }
@@ -186,7 +183,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional
-    public RecipeDto updateStatus(UUID id, RecipeStatus status) throws Exception {
+    public RecipeDto updateStatus(Long id, RecipeStatus status) throws Exception {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new Exception("Not exist recipe id " + id));
         recipe.setStatus(status);

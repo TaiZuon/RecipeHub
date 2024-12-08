@@ -12,8 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class IngredientResponse {
-    private UUID ingredientId;
+    private Long ingredientId;
     private String name;
-    private BigDecimal quantity;
-    private UnitType unit;
 }
