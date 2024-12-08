@@ -1,10 +1,10 @@
 spring:
   application:
-    name: ingredient_service
+    name: category_service
   datasource:
-    url: jdbc:mysql://localhost:3306/ingredient_service
-    username: root
-    password: root
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,6 +25,6 @@ aws:
   default_avatar_url: ${DEFAULT_AVATAR_URL}
   default_recipe_url: ${DEFAULT_RECIPE_URL}
 server:
-  port: 8081
+  port: 8083
 app:
   recipe: http://localhost:8082
