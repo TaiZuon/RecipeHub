@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-12-09T21:07:43+0700",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23 (Oracle Corporation)"
+    date = "2024-12-09T21:23:30+0700",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.40.0.z20241112-1021, environment: Java 17.0.13 (Eclipse Adoptium)"
 )
 @Component
 public class UserProfileMapperImpl implements UserProfileMapper {
@@ -22,10 +22,10 @@ public class UserProfileMapperImpl implements UserProfileMapper {
 
         UserProfile.UserProfileBuilder userProfile = UserProfile.builder();
 
-        userProfile.userId( request.getUserId() );
-        userProfile.fullName( request.getFullName() );
-        userProfile.dob( request.getDob() );
         userProfile.city( request.getCity() );
+        userProfile.dob( request.getDob() );
+        userProfile.fullName( request.getFullName() );
+        userProfile.userId( request.getUserId() );
 
         return userProfile.build();
     }
@@ -38,10 +38,10 @@ public class UserProfileMapperImpl implements UserProfileMapper {
 
         UserProfileResponse.UserProfileResponseBuilder userProfileResponse = UserProfileResponse.builder();
 
-        userProfileResponse.id( entity.getId() );
-        userProfileResponse.fullName( entity.getFullName() );
-        userProfileResponse.dob( entity.getDob() );
         userProfileResponse.city( entity.getCity() );
+        userProfileResponse.dob( entity.getDob() );
+        userProfileResponse.fullName( entity.getFullName() );
+        userProfileResponse.id( entity.getId() );
 
         return userProfileResponse.build();
     }
