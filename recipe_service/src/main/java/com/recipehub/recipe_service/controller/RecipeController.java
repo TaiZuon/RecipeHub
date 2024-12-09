@@ -43,7 +43,8 @@ public class RecipeController {
     public ResponseEntity<PageResponse<RecipeResponse>> getAllRecipes(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-            @RequestParam(required = false) List<String> categoryType
+            @RequestParam(required = false) List<String> categoryType,
+            @RequestParam(required = false) String title
             ) {
 //        return ResponseEntity<PageResponse<RecipeResponse>>builder()
 //                .result(recipeService.getAllRecipe(page, size))
@@ -53,7 +54,7 @@ public class RecipeController {
             categoryTypeList = categoryType.stream()
                     .map(CategoryType::valueOf).toList();
         }
-        PageResponse<RecipeResponse> result = recipeService.getAllRecipe(page, size, categoryTypeList);
+        PageResponse<RecipeResponse> result = recipeService.getAllRecipe(page, size, categoryTypeList, title);
         return ResponseEntity.ok(result);
     }
 

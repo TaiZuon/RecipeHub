@@ -33,5 +33,9 @@ public class RecipeSpecification {
             return criteriaBuilder.or(predicates);
         };
     }
+    public static Specification<Recipe> hasTitle(String title) {
+        return (root, query, criteriaBuilder) ->
+                title == null ? null : criteriaBuilder.like(root.get("title"), "%" + title.trim() + "%");
+    }
 
 }

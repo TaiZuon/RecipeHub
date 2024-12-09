@@ -15,13 +15,10 @@ const AddIngredientPage = () => {
 
   const onFinish = async (values) => {
     const token = localStorage.getItem("authToken");
-    if (!token) {
-      message.error("Bạn cần đăng nhập để thêm nguyên liệu!");
-      return;
-    }
-
     const decodedToken = jwtDecode(token);
-    const userId = decodedToken.userId;
+    // console.log(decodedToken);
+
+    const userId = decodedToken.sub;
 
     const imageUrls = [];
 
@@ -30,7 +27,9 @@ const AddIngredientPage = () => {
       const file = fileList[i].originFileObj;
       try {
         const imageUrl = await fileUtils.uploadImage(file, `ingredients/${userId}`);
+        
         imageUrls.push({ imageUrl, isPrimary: i === 0 }); // Set the first image as primary
+        console.log("Uploaded image URL: ", imageUrl);
       } catch (error) {
         message.error("Đã xảy ra lỗi khi tải lên hình ảnh!");
         console.error("Error: ", error);
