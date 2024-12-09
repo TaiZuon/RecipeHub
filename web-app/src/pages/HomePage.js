@@ -3,6 +3,7 @@ import { Layout, Card, Input, Row, Col, message } from "antd";
 import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const { Content, Footer } = Layout;
 const { Search } = Input;
@@ -10,15 +11,16 @@ const { Search } = Input;
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useState({ page: 1, size: 10, categoryType: [] });
 
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
+  const navigate = useNavigate();
 
-  const fetchRecipes = async () => {
+  const fetchRecipes = async (page) => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8082/api/recipes");
+      const response = await axios.get("http://localhost:8082/api/recipes/search", {
+        params: searchParams
+      });
       setRecipes(response.data);
     } catch (error) {
       message.error("Không thể tải dữ liệu công thức!");
@@ -26,6 +28,10 @@ const HomePage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchRecipes();
+  }, [searchParams]);
 
   const onSearch = (value) => {
     // Xử lý logic tìm kiếm (có thể gọi API hoặc lọc danh sách hiện tại)
