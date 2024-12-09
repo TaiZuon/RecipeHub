@@ -9,6 +9,8 @@ import AdminPage from "./pages/AdminPage";
 import AddRecipePage from "./pages/AddRecipePage";
 import AddIngredientPage from "./pages/AddIngredientPage";
 import "./App.css";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 const App = () => {
   return (
@@ -17,11 +19,43 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/recipe/:id" element={<RecipeDetails />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/add-recipe" element={<AddRecipePage />} />
-        <Route path="/add-ingredient" element={<AddIngredientPage />} />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/add-recipe"
+          element={
+            <ProtectedRoute>
+              <AddRecipePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/add-ingredient"
+          element={
+            <ProtectedRoute>
+              <AddIngredientPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
