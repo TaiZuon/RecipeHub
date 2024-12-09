@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Layout, Form, Input, Button, message } from "antd";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import moment from "moment";
 
 const { Header, Content, Footer } = Layout;
 
@@ -10,12 +11,17 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
-    const { username, email, password } = values;
+    const { username, password, fullName, dob, city } = values;
+
+    const formattedDob = moment(dob).format("YYYY-MM-DD") + "T00:00:00";
 
     const requestData = {
       username,
       password,
       role: "USER",
+      fullName,
+      dob: formattedDob,
+      city,
     };
 
     try {
@@ -42,27 +48,51 @@ const RegisterPage = () => {
   return (
     <Layout>
       <Header style={{ color: "white", textAlign: "center" }}>
-        <h1>Đăng ký</h1>
+        <h1>Register</h1>
       </Header>
       <Content style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
-        <Form name="register" onFinish={onFinish}>
+        <Form
+          layout="vertical" // Label hiển thị trên các ô nhập
+          onFinish={onFinish}
+          style={{ maxWidth: "600px", margin: "0 auto" }}
+          name="register"
+        >
           <Form.Item
+            label="Tên người dùng"
             name="username"
             rules={[{ required: true, message: "Hãy nhập tên người dùng!" }]}
           >
-            <Input placeholder="Tên người dùng" />
+            <Input placeholder="Ví dụ: nguyen.duong" />
           </Form.Item>
-          {/* <Form.Item
-            name="email"
-            rules={[{ required: true, message: "Hãy nhập email!" }]}
-          >
-            <Input placeholder="Email" />
-          </Form.Item> */}
           <Form.Item
+            label="Mật khẩu"
             name="password"
             rules={[{ required: true, message: "Hãy nhập mật khẩu!" }]}
           >
-            <Input.Password placeholder="Mật khẩu" />
+            <Input.Password placeholder="" />
+          </Form.Item>
+          <Form.Item
+            label="Họ tên"
+            name="fullName"
+            rules={[{ required: true, message: "Hãy nhập họ tên!" }]}
+          >
+            <Input placeholder="Ví dụ: Nguyễn Thái Dương" />
+          </Form.Item>
+          <Form.Item
+            label="Ngày tháng năm sinh"
+            name="dob"
+            rules={[
+              { required: true, message: "Hãy nhập ngày tháng năm sinh!" },
+            ]}
+          >
+            <Input type="date" placeholder="Ví dụ: 1998-08-21" />
+          </Form.Item>
+          <Form.Item
+            label="Thành phố"
+            name="city"
+            rules={[{ required: true, message: "Hãy nhập thành phố!" }]}
+          >
+            <Input placeholder="Ví dụ: Hà Nội" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>

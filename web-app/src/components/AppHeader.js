@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 const { Header } = Layout;
 
 const AppHeader = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Kiểm tra token từ localStorage để xác định trạng thái đăng nhập
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(!!token); // true nếu token tồn tại
+  }, []);
+
+  const toggleLogin = () => {
+    if (isLoggedIn) {
+      // Xử lý đăng xuất
+      localStorage.removeItem("token");
+    }
+    setIsLoggedIn(!isLoggedIn);
+  };
+
   return (
     <Layout>
       <Header
@@ -31,6 +48,9 @@ const AppHeader = () => {
           </Menu.Item>
           <Menu.Item key="profile">
             <Link to="/profile">Profile</Link>
+          </Menu.Item>
+          <Menu.Item key="login-logout" onClick={toggleLogin}>
+            <Link to="/login">{isLoggedIn ? "Log out" : "Log in"}</Link>
           </Menu.Item>
         </Menu>
       </Header>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Form, Input, Button, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -13,8 +13,14 @@ const LoginPage = () => {
   const handleUsernameChange = (e) => setUsername(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
 
+  useEffect(() => {
+    //delete token if exists
+    localStorage.removeItem("authToken");
+  }, []);
+
   const onFinish = async () => {
     try {
+      console.log("Login data:", { username, password });
       // Gửi request đến API đăng nhập
       const response = await axios.post(
         "http://localhost:8080/api/auth/login",
@@ -24,11 +30,13 @@ const LoginPage = () => {
         }
       );
 
-      if (response.data.success) {
+      console.log("Login response:", response);
+
+      if (response.status === 200) {
         // Lưu token vào localStorage và chuyển hướng đến trang chính
         localStorage.setItem("authToken", response.data.token);
         message.success("Đăng nhập thành công!");
-        navigate("/dashboard"); // Chuyển đến trang dashboard sau khi đăng nhập thành công
+        navigate("/"); // Chuyển đến trang dashboard sau khi đăng nhập thành công
       } else {
         message.error("Đăng nhập thất bại!");
       }
@@ -41,7 +49,7 @@ const LoginPage = () => {
   return (
     <Layout>
       <Header style={{ color: "white", textAlign: "center" }}>
-        <h1>Đăng nhập</h1>
+        <h1>Log In</h1>
       </Header>
       <Content style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
         <Form name="login" onFinish={onFinish}>
