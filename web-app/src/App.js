@@ -1,32 +1,30 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import RecipeList from "./pages/RecipeList";
-import RecipeForm from "./pages/RecipeForm";
-import Profile from "./pages/Profile";
-import AdminDashboard from "./pages/AdminDashboard";
-import { Layout } from "antd";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ProfilePage from "./pages/ProfilePage";
+import RecipeDetails from "./pages/RecipeDetails";
+import AdminPage from "./pages/AdminPage";
+import AddRecipePage from "./pages/AddRecipePage";
+import AddIngredientPage from "./pages/AddIngredientPage";
+import "./App.css";
 
-function App() {
+const App = () => {
   return (
-    <Layout>
-      <Navbar />
-      <Layout.Content style={{ padding: "50px" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/recipes" element={<RecipeList />} />
-          <Route path="/add-recipe" element={<RecipeForm />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Routes>
-      </Layout.Content>
-    </Layout>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/recipe/:id" element={<RecipeDetails />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/add-recipe" element={<AddRecipePage />} />
+        <Route path="/add-ingredient" element={<AddIngredientPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
