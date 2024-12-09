@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface RecipeService {
     RecipeDto getRecipe(Long id) throws Exception;
-    PageResponse<RecipeResponse> getAllRecipe(int page, int size, List<CategoryType> categoryType);
+    PageResponse<RecipeResponse> getAllRecipe(int page, int size, List<CategoryType> categoryType, String title);
     RecipeDto createRecipe(RecipeCreateRequest request) throws Exception;
     void deleteRecipe(Long recipeId);
     RecipeDto updateRecipe(Long id, RecipeUpdateRequest request);

@@ -1,5 +1,6 @@
 package com.recipehub.auth_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
 
 import com.recipehub.auth_service.entity.UserStatus;

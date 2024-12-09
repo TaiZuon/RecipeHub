@@ -57,7 +57,7 @@ const fileUtils = {
         "http://localhost:8082/api/images/presigned-url",
         {
           params: {
-            folder: `chat/${folder}`,
+            folder: `${folder}`,
             fileType: file.type,
           },
         }
@@ -82,10 +82,12 @@ const fileUtils = {
       });
 
       if (!uploadResponse.ok) {
+        console.log("hihi");
         throw new Error(`Failed to upload to S3: ${uploadResponse.statusText}`);
       }
 
       if (!fileUrl) {
+        console.log("haha");
         throw new Error("File URL missing from presigned URL response");
       }
 

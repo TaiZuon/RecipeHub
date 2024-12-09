@@ -1,6 +1,9 @@
-import React from "react";
-import { Layout, Card, List } from "antd";
+import React, { useEffect, useState } from "react";
+import { Layout, Card, List, message } from "antd";
+import { useParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
+import { getRecipe } from "../service/recipeService";
+
 const { Content, Footer } = Layout;
 
 const recipe = {
@@ -22,6 +25,33 @@ const recipe = {
 };
 
 const RecipeDetails = () => {
+  const { id } = useParams();
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await getRecipe(id);
+        setRecipe(response.data);
+        console.log(response.data);
+      } catch (error) {
+        message.error("Không thể tải dữ liệu công thức!");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipe();
+  }, [id]);
+
+  if (loading) {
+    return <p>Đang tải...</p>;
+  }
+
+  if (!recipe) {
+    return <p>Không tìm thấy công thức!</p>;
+  }
   return (
     <Layout>
       <AppHeader />

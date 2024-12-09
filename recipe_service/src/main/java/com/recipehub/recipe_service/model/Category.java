@@ -1,5 +1,6 @@
 package com.recipehub.recipe_service.model;
 
+import com.recipehub.recipe_service.Enum.CategoryType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,8 +18,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "name", nullable = false, length = 100)
-    private String categoryType;
+    private CategoryType categoryType;
 
     @Column(name = "description", nullable = false, length = 10000)
     private String description;

@@ -48,14 +48,15 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public PageResponse<RecipeResponse> getAllRecipe(int page, int size, List<CategoryType> categoryType) {
+    public PageResponse<RecipeResponse> getAllRecipe(int page, int size, List<CategoryType> categoryType, String title) {
         Sort sort = Sort.by("createdAt").descending();
         Pageable pageable = PageRequest.of(page - 1, size, sort);
 
         var pageData = recipeRepository.findAll(pageable);
 
         Specification<Recipe> spec = Specification
-                .where(RecipeSpecification.hasCategoryTypes(categoryType));
+                .where(RecipeSpecification.hasCategoryTypes(categoryType))
+                .and(RecipeSpecification.hasTitle(title));
 
         return PageResponse.<RecipeResponse>builder()
                 .currentPage(page)
