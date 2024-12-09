@@ -48,7 +48,11 @@ const RegisterPage = () => {
   return (
     <Layout>
       <Header style={{ color: "white", textAlign: "center" }}>
-        <h1>Register</h1>
+        <div style={{ color: "white", fontSize: "20px" }}>
+          <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+            RecipeHub
+          </Link>
+        </div>
       </Header>
       <Content style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
         <Form
