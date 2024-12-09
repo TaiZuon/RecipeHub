@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Layout, Form, Input, Button, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const { Header, Content, Footer } = Layout;
 
@@ -33,10 +34,17 @@ const LoginPage = () => {
       console.log("Login response:", response);
 
       if (response.status === 200) {
-        // Lưu token vào localStorage và chuyển hướng đến trang chính
-        localStorage.setItem("authToken", response.data.token);
-        message.success("Đăng nhập thành công!");
-        navigate("/"); // Chuyển đến trang dashboard sau khi đăng nhập thành công
+        const token = response.data.token;
+        const status = jwtDecode(token).status;
+        if (status !== "ACTIVE") {
+          message.error("Tài khoản của bạn đã bị khóa!");
+          return;
+        } else {
+          // Lưu token vào localStorage và chuyển hướng đến trang chính
+          localStorage.setItem("authToken", response.data.token);
+          message.success("Đăng nhập thành công!");
+          navigate("/");
+        } // Chuyển đến trang dashboard sau khi đăng nhập thành công
       } else {
         message.error("Đăng nhập thất bại!");
       }
