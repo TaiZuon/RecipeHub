@@ -3,7 +3,6 @@ package com.recipehub.auth_service.controller;
 import com.recipehub.auth_service.dto.request.UserCreationRequest;
 import com.recipehub.auth_service.dto.response.UserResponse;
 import com.recipehub.auth_service.entity.User;
-import com.recipehub.auth_service.entity.UserStatus;
 import com.recipehub.auth_service.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,9 +55,9 @@ public class AuthController {
         // Lấy thông tin user (ví dụ: userId, username, role)
         String userId = userService.getUserId(username); // Giả sử userService có phương thức này
         String role = userService.getUserRole(username); // Giả sử userService có phương thức này
-        String status = userService.getUserStatus(username);
+
         // Tạo JWT token với userId, username và role
-        String token = jwtUtil.generateToken(userId, username, role, status);
+        String token = jwtUtil.generateToken(userId, username, role);
 
         return ResponseEntity.ok(Map.of("message", "Đăng nhập thành công", "token", token));
     }

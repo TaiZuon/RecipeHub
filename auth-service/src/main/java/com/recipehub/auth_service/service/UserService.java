@@ -71,10 +71,6 @@ public class UserService {
         return user != null ? user.getRole().name() : null; // Trả về tên của enum dưới dạng chuỗi
     }
 
-    public String getUserStatus(String username) {
-        User user = userRepository.findByUsername(username);
-        return user != null ? user.getStatus().name() : null;
-    }
 
     // Phương thức cấm người dùng
     public boolean banUser(String username) {

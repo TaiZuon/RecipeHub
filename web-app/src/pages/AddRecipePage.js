@@ -109,7 +109,6 @@ const AddRecipePage = () => {
           >
             <Input placeholder="Tên công thức" />
           </Form.Item>
-
           <Form.Item
             name="description"
             rules={[{ required: true, message: "Hãy nhập mô tả!" }]}
@@ -137,7 +136,6 @@ const AddRecipePage = () => {
               </div>
             </div>
           </Form.Item>
-
           <div>
             <h3>Nguyên liệu:</h3>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>

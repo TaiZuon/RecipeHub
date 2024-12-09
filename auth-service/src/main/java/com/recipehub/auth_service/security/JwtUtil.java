@@ -14,12 +14,11 @@ public class JwtUtil {
     private final String SECRET_KEY = "mysecretkeymysecretkeymysecretkeymysecretkey"; // Thay đổi key này thành một chuỗi bí mật an toàn
 
     // Tạo JWT token
-    public String generateToken(String userId, String username, String role, String status) {
+    public String generateToken(String userId, String username, String role) {
         return Jwts.builder()
                 .setSubject(userId)
                 .claim("username", username)
-                .claim("role", role)
-                .claim("status", status)
+                .claim("role", role) // Thêm thông tin role vào token
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour expiration
                 .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)  // Sử dụng hmacShaKeyFor
