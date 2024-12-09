@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback  } from "react";
-import { Layout, Card, Input, Row, Col, message } from "antd";
+import { Layout, Card, Input, Row, Col,  Button } from "antd";
 import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
+import { getRecipes } from "../service/recipeService";
 
 const { Content, Footer } = Layout;
 const { Search } = Input;
@@ -12,7 +13,7 @@ const { Search } = Input;
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchParams, setSearchParams] = useState({ page: 1, size: 1, categoryType: [] });
+  const [searchParams, setSearchParams] = useState({ page: 1, size: 6});
   const [totalPages, setTotalPages] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
@@ -21,44 +22,18 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  const fetchRecipes = async (page) => {
-    setLoading(true);
-    try {
-      const response = await axios.get("http://localhost:8082/api/recipes/search", {
-        params: {
-          page: page,
-          size: 6
-
-        },
-      });
-      const data = response.data.data;
-      // console.log(response);
-      const recipesArray = Array.isArray(data) ? data : [];
-      setRecipes(recipesArray);    
-      } 
-      catch (error) {
-      message.error("Không thể tải dữ liệu công thức!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadRecipes(page);
-  }, [page]);
-
   const loadRecipes = async (page) => {
     console.log(`loading recipes for page ${page}`);
     setLoading(true);
     try {
-      const response = await fetchRecipes(page);
-      console.log("hihiih"+response);
+      const response = await getRecipes(page, 6);
+      // console.log("hihiih"+response);
       const data = response?.data?.data || [];
       console.log(data);
       setTotalPages(response?.data?.totalPages || 0);
       setRecipes((prevRecipes) => [...prevRecipes, ...data]);
       setHasMore(data.length > 0);
-      console.log("loaded recipes:", data);
+      // console.log("loaded recipes:", data);
     } catch (error) {
       if (error.response?.status === 401) {
         navigate("/login");
@@ -68,8 +43,14 @@ const HomePage = () => {
     }
   };
 
+  useEffect(() => {
+    loadRecipes(page);
+  }, [page]);
+
   const onSearch = (value) => {
-    setSearchParams({ ...searchParams, categoryType: value ? [value] : [] });
+    setSearchParams({ ...searchParams,  page: 1 });
+    setPage(1); // Reset page to 1 when searching
+    setRecipes([]); // Clear previous recipes
   };
   // useEffect(() => {
   //   if (!hasMore) return;
@@ -99,16 +80,22 @@ const HomePage = () => {
     });
     if (node) observer.current.observe(node);
   }, [loading, hasMore]);
+
   return (
     <Layout>
       <AppHeader />
       <Content style={{ padding: "20px" }}>
-        <Search
-          placeholder="Tìm kiếm công thức..."
-          onSearch={onSearch}
-          enterButton
-          style={{ marginBottom: "20px" }}
-        />
+      <Input.Group compact style={{ marginBottom: "20px" }}>
+          <Search
+            placeholder="Tìm kiếm công thức..."
+            onSearch={onSearch}
+            enterButton
+            style={{ width: '50%' }}
+          />
+          <Button type="primary" onClick={() => onSearch('Button1')}>Button 1</Button>
+          <Button type="primary" onClick={() => onSearch('Button2')}>Button 2</Button>
+          <Button type="primary" onClick={() => onSearch('Button3')}>Button 3</Button>
+        </Input.Group>
          <Row gutter={[16, 16]}>
          {loading ? (
             <p>Đang tải...</p>

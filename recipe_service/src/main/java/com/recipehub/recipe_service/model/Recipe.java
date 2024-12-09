@@ -34,7 +34,7 @@ public class Recipe {
     private List<RecipeImage> recipeImages;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = true)
     private RecipeStatus status;
 
     @Column(name = "created_by", nullable = false)

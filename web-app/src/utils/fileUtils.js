@@ -50,7 +50,7 @@ const fileUtils = {
             // Changed to /api/images/presigned-url to match backend
             const presignedResponse = await axios.get('http://localhost:8082/api/images/presigned-url', {
                 params: {
-                    folder: `chat/${folder}`,
+                    folder: `${folder}`,
                     fileType: file.type
                 }
             });
@@ -63,7 +63,7 @@ const fileUtils = {
 
             const { uploadUrl, fileUrl } = presignedResponse.data;
             console.log('Presigned URL:', uploadUrl, 'File URL:', fileUrl);
-
+            
             // Upload to S3
             const uploadResponse = await fetch(uploadUrl, {
                 method: 'PUT',
@@ -74,10 +74,12 @@ const fileUtils = {
             });
 
             if (!uploadResponse.ok) {
+                console.log('hihi');
                 throw new Error(`Failed to upload to S3: ${uploadResponse.statusText}`);
             }
 
             if (!fileUrl) {
+                console.log('haha');
                 throw new Error('File URL missing from presigned URL response');
             }
 
