@@ -1,9 +1,12 @@
 package com.recipehub.recipe_service.controller;
 
+import com.recipehub.recipe_service.Enum.CategoryType;
 import com.recipehub.recipe_service.Enum.RecipeStatus;
 import com.recipehub.recipe_service.dto.RecipeDto;
 import com.recipehub.recipe_service.dto.request.RecipeCreateRequest;
 import com.recipehub.recipe_service.dto.request.RecipeUpdateRequest;
+import com.recipehub.recipe_service.dto.response.PageResponse;
+import com.recipehub.recipe_service.dto.response.RecipeResponse;
 import com.recipehub.recipe_service.mapper.RecipeMapper;
 import com.recipehub.recipe_service.model.Recipe;
 import com.recipehub.recipe_service.service.RecipeService;
@@ -16,8 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static java.util.stream.Stream.builder;
 
 @RestController
 @RequestMapping("/api/recipes")
@@ -33,9 +39,22 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getRecipe(id));
     }
 
-    @GetMapping
-    public ResponseEntity<List<RecipeDto>> getAllRecipes() {
-        return ResponseEntity.ok(recipeService.getAllRecipe());
+    @GetMapping("/search")
+    public ResponseEntity<PageResponse<RecipeResponse>> getAllRecipes(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            @RequestParam(required = false) List<String> categoryType
+            ) {
+//        return ResponseEntity<PageResponse<RecipeResponse>>builder()
+//                .result(recipeService.getAllRecipe(page, size))
+//                .build();
+        List<CategoryType> categoryTypeList = new ArrayList<>();
+        if (categoryType != null) {
+            categoryTypeList = categoryType.stream()
+                    .map(CategoryType::valueOf).toList();
+        }
+        PageResponse<RecipeResponse> result = recipeService.getAllRecipe(page, size, categoryTypeList);
+        return ResponseEntity.ok(result);
     }
 
 //    @GetMapping("/search")

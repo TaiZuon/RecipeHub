@@ -11,7 +11,7 @@ public class RecipeUpdateRequest {
     private String title;
     private String description;
 
-    private List<RecipeImageDto> recipeImages;
+    private List<RecipeImageDto> imageUrls;
     private List<String> newImages;
 
     public boolean hasNewImages() {

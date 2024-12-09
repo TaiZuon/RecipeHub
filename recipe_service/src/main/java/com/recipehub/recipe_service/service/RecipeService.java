@@ -1,16 +1,19 @@
 package com.recipehub.recipe_service.service;
 
+import com.recipehub.recipe_service.Enum.CategoryType;
 import com.recipehub.recipe_service.Enum.RecipeStatus;
 import com.recipehub.recipe_service.dto.RecipeDto;
 import com.recipehub.recipe_service.dto.request.RecipeCreateRequest;
 import com.recipehub.recipe_service.dto.request.RecipeUpdateRequest;
+import com.recipehub.recipe_service.dto.response.PageResponse;
+import com.recipehub.recipe_service.dto.response.RecipeResponse;
 
 import java.util.List;
 
 
 public interface RecipeService {
     RecipeDto getRecipe(Long id) throws Exception;
-    List<RecipeDto> getAllRecipe();
+    PageResponse<RecipeResponse> getAllRecipe(int page, int size, List<CategoryType> categoryType);
     RecipeDto createRecipe(RecipeCreateRequest request) throws Exception;
     void deleteRecipe(Long recipeId);
     RecipeDto updateRecipe(Long id, RecipeUpdateRequest request);

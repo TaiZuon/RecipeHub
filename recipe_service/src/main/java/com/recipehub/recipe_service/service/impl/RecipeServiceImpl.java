@@ -1,10 +1,13 @@
 package com.recipehub.recipe_service.service.impl;
 
 import com.recipehub.recipe_service.AWS.AmazonS3Service;
+import com.recipehub.recipe_service.Enum.CategoryType;
 import com.recipehub.recipe_service.Enum.RecipeStatus;
 import com.recipehub.recipe_service.dto.RecipeDto;
 import com.recipehub.recipe_service.dto.request.RecipeCreateRequest;
 import com.recipehub.recipe_service.dto.request.RecipeUpdateRequest;
+import com.recipehub.recipe_service.dto.response.PageResponse;
+import com.recipehub.recipe_service.dto.response.RecipeResponse;
 import com.recipehub.recipe_service.dto.response.UserResponse;
 import com.recipehub.recipe_service.exception.AppException;
 import com.recipehub.recipe_service.exception.ErrorCode;
@@ -14,9 +17,14 @@ import com.recipehub.recipe_service.model.RecipeImage;
 import com.recipehub.recipe_service.repository.RecipeRepository;
 import com.recipehub.recipe_service.repository.httpClient.AuthClient;
 import com.recipehub.recipe_service.service.RecipeService;
+import com.recipehub.recipe_service.service.RecipeSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,11 +48,22 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeDto> getAllRecipe() {
-        List<Recipe> recipes = recipeRepository.findAll();
-        return recipes.stream()
-                .map(recipe -> recipeMapper.recipeToRecipeDto(recipe))
-                .collect(Collectors.toList());
+    public PageResponse<RecipeResponse> getAllRecipe(int page, int size, List<CategoryType> categoryType) {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+        var pageData = recipeRepository.findAll(pageable);
+
+        Specification<Recipe> spec = Specification
+                .where(RecipeSpecification.hasCategoryTypes(categoryType));
+
+        return PageResponse.<RecipeResponse>builder()
+                .currentPage(page)
+                .pageSize(pageData.getSize())
+                .totalPages(pageData.getTotalPages())
+                .totalElements(pageData.getTotalElements())
+                .data(pageData.getContent().stream().map(recipeMapper::toPostResponse).toList())
+                .build();
     }
 
     @Override

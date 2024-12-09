@@ -8,6 +8,7 @@ import com.recipehub.recipe_service.dto.RecipeImageDto;
 import com.recipehub.recipe_service.dto.request.RecipeCreateRequest;
 
 import com.recipehub.recipe_service.dto.response.RecipeIngredientResponse;
+import com.recipehub.recipe_service.dto.response.RecipeResponse;
 import com.recipehub.recipe_service.model.Recipe;
 import com.recipehub.recipe_service.model.RecipeImage;
 import com.recipehub.recipe_service.model.RecipeIngredient;
@@ -71,4 +72,24 @@ public class RecipeMapper {
         return recipeDto;
     }
 
+    public RecipeResponse toPostResponse(Recipe recipe) {
+        RecipeResponse recipeResponse = new RecipeResponse();
+        recipeResponse.setRecipeId(recipe.getId());
+        recipeResponse.setTitle(recipe.getTitle());
+        recipeResponse.setDescription(recipe.getDescription());
+        recipeResponse.setStatus(recipe.getStatus());
+        recipeResponse.setCreatedBy(recipe.getCreatedBy());
+        recipeResponse.setCreatedAt(recipe.getCreatedAt());
+        recipeResponse.setUpdatedAt(recipe.getUpdatedAt());
+
+        List<RecipeImage> recipeImages = recipe.getRecipeImages();
+        if (recipeImages != null && !recipeImages.isEmpty()) {
+            List<RecipeImageDto> recipeImageDtoList = recipeImages.stream()
+                    .map(this::recipeImageToRecipeImageDto)
+                    .collect(Collectors.toList());
+            recipeResponse.setRecipeImages(recipeImageDtoList);
+        }
+
+        return recipeResponse;
+    }
 }
