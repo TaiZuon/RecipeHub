@@ -14,6 +14,8 @@ public interface IngredientService {
     Ingredient createIngredient(IngredientRequest request) throws Exception;
     void deleteIngredient(Long ingredientId);
     IngredientDto updateIngredient(Long id, IngredientUpdateRequest request);
+    IngredientDto getIngredientByName(String name) throws Exception;
+
 //    Page<Ingredient> searchIngredients(String name, IngredientStatus status,
 //                                       int page, int size, String sortField, Sort.Direction sortDirection);
 }

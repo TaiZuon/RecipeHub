@@ -13,24 +13,30 @@ const RegisterPage = () => {
   const onFinish = async (values) => {
     const { username, password, fullName, dob, city } = values;
 
-    const formattedDob = moment(dob).format("YYYY-MM-DD") + "T00:00:00";
+    const formattedDob = moment(dob).format("YYYY-MM-DD");
 
     const requestData = {
       username,
       password,
       role: "USER",
       fullName,
-      dob: formattedDob,
+      dob,
       city,
     };
 
     try {
       setLoading(true);
+      console.log(dob)
       const response = await axios.post(
         "http://localhost:8080/api/auth/register",
-        requestData
+        {username,
+        password,
+        role: "USER",
+        fullName,
+        dob,
+        city,}
       );
-
+      
       message.success("Đăng ký thành công!");
       console.log("Response: ", response.data);
       navigate("/login");

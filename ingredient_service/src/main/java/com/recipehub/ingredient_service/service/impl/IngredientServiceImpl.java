@@ -118,4 +118,10 @@ public class IngredientServiceImpl implements IngredientService {
         }
     }
 
+    @Override
+    public IngredientDto getIngredientByName(String name) throws Exception {
+        Ingredient ingredient = ingredientRepository.findByName(name)
+                .orElseThrow(() -> new Exception("Ingredient not found"));
+        return ingredientMapper.ingredientToIngredientDto(ingredient);
+    }
 }

@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class UserProfile {
     private String fullName;
 
     @Column(name = "dob", nullable = false)
-    private LocalDateTime dob;
+    private LocalDate dob;
 
     @Column(name = "city", nullable = false)
     private String city;

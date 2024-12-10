@@ -3,6 +3,7 @@ package com.recipehub.profile_service.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -13,7 +14,8 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProfileResponse {
      Long id;
+     Long userId;
      String fullName;
-     LocalDateTime dob;
+     LocalDate dob;
      String city;
 }

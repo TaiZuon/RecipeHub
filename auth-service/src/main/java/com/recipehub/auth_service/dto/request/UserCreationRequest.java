@@ -5,6 +5,7 @@ import com.recipehub.auth_service.entity.UserRole;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,6 +18,6 @@ public class UserCreationRequest {
     String password;
     String fullName;
     UserRole role;
-    LocalDateTime dob;
+    LocalDate dob;
     String city;
 }

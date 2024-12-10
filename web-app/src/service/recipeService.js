@@ -12,6 +12,11 @@ export const getRecipes = async (page, size = 6) => {
     });
   };
 
-  export const getRecipe = async (id) => {
-    return await axios.get(`${API_BASE_URL}/recipes/${id}`);
-  };
+export const getRecipe = async (id) => {
+  return await axios.get(`${API_BASE_URL}/recipes/${id}`);
+};
+
+export const createRecipeIngredient = async (recipeIngredient) => {
+  return await axios.post(`${API_BASE_URL}/recipe_ingredients`, recipeIngredient
+  );
+};

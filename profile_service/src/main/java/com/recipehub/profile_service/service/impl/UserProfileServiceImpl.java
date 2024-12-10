@@ -35,4 +35,23 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         return userProfileMapper.toUserProfileReponse(userProfile);
     }
+    @Override
+    public UserProfileResponse updateProfile(Long profileId, ProfileCreationRequest request) {
+        UserProfile userProfile = userProfileRepository.findById(profileId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        userProfile.setFullName(request.getFullName());
+        userProfile.setDob(request.getDob());
+        userProfile.setCity(request.getCity());
+
+        userProfile = userProfileRepository.save(userProfile);
+
+        return UserProfileResponse.builder()
+                .id(userProfile.getId())
+                .userId(userProfile.getUserId())
+                .fullName(userProfile.getFullName())
+                .dob(userProfile.getDob())
+                .city(userProfile.getCity())
+                .build();
+    }
 }

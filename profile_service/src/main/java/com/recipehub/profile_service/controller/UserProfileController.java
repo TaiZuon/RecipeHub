@@ -23,4 +23,9 @@ public class UserProfileController {
     UserProfileResponse getProfile(@PathVariable Long profileId) {
         return userProfileService.getProfile(profileId);
     }
+
+    @PutMapping("/users/{profileId}")
+    UserProfileResponse updateProfile(@PathVariable Long profileId, @RequestBody ProfileCreationRequest request) {
+        return userProfileService.updateProfile(profileId, request);
+    }
 }

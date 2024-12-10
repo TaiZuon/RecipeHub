@@ -5,13 +5,15 @@ import AppHeader from "../components/AppHeader";
 import axios from "axios";
 import fileUtils from "../utils/fileUtils";
 import { jwtDecode } from "jwt-decode";
-import { getIngredients } from "../service/ingredientService";
+import { getIngredients, getIngredientByName } from "../service/ingredientService";
+import { createRecipeIngredient } from "../service/recipeService";
 
 const { Content, Footer } = Layout;
 
 const AddRecipePage = () => {
   const [fileList, setFileList] = useState([]);
   const [ingredients, setIngredients] = useState([]);
+  
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -65,6 +67,16 @@ const AddRecipePage = () => {
         "http://localhost:8082/api/recipes",
         recipeRequest
       );
+        // Gọi API để tạo RecipeIngredient cho từng nguyên liệu đã chọn
+      console.log(response)
+      for (const ingredient of selectedIngredients) {
+        // console.log(ingredient);
+        const ingredientResponse = await getIngredientByName(ingredient);
+
+        const recipeIngredient = { recipeId: response.data.id, ingredientId: ingredientResponse.data.id};
+        console.log(recipeIngredient);
+        await createRecipeIngredient(recipeIngredient);
+      }
       message.success("Công thức đã được thêm thành công!");
       console.log("Received values: ", response.data);
     } catch (error) {
@@ -77,9 +89,9 @@ const AddRecipePage = () => {
   const [selectedIngredients, setSelectedIngredients] = useState([]);
 
   // Hàm thêm nguyên liệu vào danh sách
-  const handleAddIngredient = (ingredient) => {
+  const handleAddIngredient = async (ingredient) => {
     if (!selectedIngredients.includes(ingredient)) {
-      setSelectedIngredients((prev) => [...prev, ingredient]); // Thêm nguyên liệu mới
+      setSelectedIngredients((prev) => [...prev, ingredient]); // Thêm nguyên liệu mới     
     }
   };
 
@@ -144,14 +156,14 @@ const AddRecipePage = () => {
               {ingredients.map((ingredient) => (
                 <Button
                   key={ingredient.id}
-                  onClick={() => handleAddIngredient(ingredient)}
+                  onClick={() => handleAddIngredient(ingredient.name)}
                   style={{
                     visibility: selectedIngredients.includes(ingredient)
                       ? "hidden"
                       : "visible",
                   }}
                 >
-                  {ingredient}
+                  {ingredient.name}
                 </Button>
               ))}
             </div>
