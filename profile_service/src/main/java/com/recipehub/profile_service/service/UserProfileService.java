@@ -9,4 +9,7 @@ public interface UserProfileService {
     public UserProfileResponse createProfile(ProfileCreationRequest request);
 
     public UserProfileResponse getProfile(Long userId);
+
+    UserProfileResponse updateProfile(Long profileId, ProfileCreationRequest request);
+
 }

@@ -30,6 +30,11 @@ public class IngredientController {
         return ResponseEntity.ok(ingredientService.getIngredient(id));
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<IngredientDto> getIngredientByName(@PathVariable String name) throws Exception {
+        return ResponseEntity.ok(ingredientService.getIngredientByName(name));
+    }
+
     @GetMapping
     public ResponseEntity<List<IngredientDto>> getAllIngredients() {
         return ResponseEntity.ok(ingredientService.getAllIngredients());

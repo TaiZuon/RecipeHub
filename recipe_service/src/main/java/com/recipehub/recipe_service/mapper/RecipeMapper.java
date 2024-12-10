@@ -7,6 +7,7 @@ import com.recipehub.recipe_service.dto.RecipeDto;
 import com.recipehub.recipe_service.dto.RecipeImageDto;
 import com.recipehub.recipe_service.dto.request.RecipeCreateRequest;
 
+import com.recipehub.recipe_service.dto.request.RecipeIngredientRequest;
 import com.recipehub.recipe_service.dto.response.RecipeIngredientResponse;
 import com.recipehub.recipe_service.dto.response.RecipeResponse;
 import com.recipehub.recipe_service.model.Recipe;
@@ -91,5 +92,12 @@ public class RecipeMapper {
         }
 
         return recipeResponse;
+    }
+
+    public RecipeIngredient mapToRecipeIngredient(RecipeIngredientRequest request, Recipe recipe) {
+        return RecipeIngredient.builder()
+                .recipe(recipe)
+                .ingredientId(request.getIngredientId())
+                .build();
     }
 }
