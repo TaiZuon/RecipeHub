@@ -1,5 +1,6 @@
 package com.recipehub.auth_service.dto.request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.*;
@@ -13,6 +14,6 @@ import lombok.experimental.FieldDefaults;
 public class ProfileCreationRequest {
     Long userId;
     String fullName;
-    LocalDateTime dob;
+    LocalDate dob;
     String city;
 }

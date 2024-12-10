@@ -1,5 +1,6 @@
 package com.recipehub.recipe_service.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.recipehub.recipe_service.Enum.UnitType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,15 +20,10 @@ public class RecipeIngredient {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
+    @JsonBackReference
     private Recipe recipe;
 
     @Column(name = "ingredient_id", nullable = false)
     private Long ingredientId;
 
-    @Column(name = "quantity", nullable = false)
-    private Double quantity;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UnitType unit;
 }
