@@ -55,9 +55,9 @@ public class AuthController {
         // Lấy thông tin user (ví dụ: userId, username, role)
         String userId = userService.getUserId(username); // Giả sử userService có phương thức này
         String role = userService.getUserRole(username); // Giả sử userService có phương thức này
-
+        String status = userService.getUserStatus(username);
         // Tạo JWT token với userId, username và role
-        String token = jwtUtil.generateToken(userId, username, role);
+        String token = jwtUtil.generateToken(userId, username, role, status);
 
         return ResponseEntity.ok(Map.of("message", "Đăng nhập thành công", "token", token));
     }

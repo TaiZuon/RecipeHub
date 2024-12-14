@@ -35,7 +35,9 @@ const LoginPage = () => {
 
       if (response.status === 200) {
         const token = response.data.token;
+        console.log("Token: ", token);
         const status = jwtDecode(token).status;
+        console.log("Status: ", status);
         if (status !== "ACTIVE") {
           message.error("Tài khoản của bạn đã bị khóa!");
           return;

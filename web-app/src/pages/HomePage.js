@@ -18,8 +18,8 @@ const HomePage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [searchMethod, setSearchMethod] = useState("dishName"); // Default search method
-  const [dishName, setDishName] = useState(""); // Track the dish name entered
+  const [searchMethod, setSearchMethod] = useState("dishName");
+  const [dishName, setDishName] = useState("");
   const observer = useRef();
   const lastPostElementRef = useRef();
 
@@ -55,34 +55,28 @@ const HomePage = () => {
     }
 
     setSearchParams({ ...searchParams, page: 1 });
-    setPage(1); // Reset page to 1 when searching
-    setRecipes([]); // Clear previous recipes
+    setPage(1);
+    setRecipes([]);
 
     try {
       setLoading(true);
       let response;
-      // Điều chỉnh logic tìm kiếm dựa trên phương thức đã chọn
-      if (searchMethod === "dishName") {
-        response = await axios.post(
-          `http://localhost:8082/api/predict/dish`,
-          { dishName, modelType: "" } // search by dish name
-        );
-        const result = response.data; // Giả sử kết quả trả về là một danh sách các công thức
-        setRecipes(result.recipes); // Giả sử kết quả có một thuộc tính "recipes"
-      } else {
-        response = await axios.post(
-          `http://localhost:8082/api/predict/dish`,
-          { dishName, modelType: searchMethod } // search by model type with dish name
-        );
-        const result = response.data; // Đây là phần cấu trúc trả về từ mô hình học máy
+      if (searchMethod !== "dishName") {
+        response = await axios.post(`http://localhost:8082/api/predict/dish`, {
+          dishName,
+          modelType: searchMethod,
+        });
+        const result = response.data;
+        console.log("hihih" + result);
         const recipe = {
           title: dishName,
           ingredients: result.Ingredients,
           instructions: result.Instructions,
         };
-        setRecipes([recipe]); // Giả sử bạn chỉ nhận được một công thức từ mô hình
+
+        setRecipes([recipe]);
       }
-      setHasMore(false); // Set hasMore to false if you're not paginating
+      setHasMore(false);
     } catch (error) {
       console.error("Error fetching predictions:", error);
     } finally {
@@ -134,13 +128,13 @@ const HomePage = () => {
         <Row gutter={[16, 16]}>
           {loading ? (
             <p>Đang tải...</p>
-          ) : (
+          ) : Array.isArray(recipes) && recipes.length > 0 ? (
             recipes.map((recipe, index) => {
               if (recipes.length === index + 1) {
                 return (
                   <Col
                     span={8}
-                    key={recipe.title} // Sử dụng title làm key vì đây là món ăn duy nhất từ mô hình
+                    key={recipe.title}
                     ref={lastPostElementCallback}
                   >
                     {searchMethod === "dishName" ? (
@@ -156,12 +150,12 @@ const HomePage = () => {
                       >
                         <h3>Nguyên liệu:</h3>
                         <ul>
-                          {recipe.ingredients.map((ingredient, i) => (
+                          {(recipe.ingredients || []).map((ingredient, i) => (
                             <li key={i}>{ingredient}</li>
                           ))}
                         </ul>
                         <h3>Hướng dẫn:</h3>
-                        <p>{recipe.instructions}</p>
+                        <p>{recipe.instructions || "Không có hướng dẫn"}</p>
                       </Card>
                     )}
                   </Col>
@@ -182,18 +176,20 @@ const HomePage = () => {
                       >
                         <h3>Nguyên liệu:</h3>
                         <ul>
-                          {recipe.ingredients.map((ingredient, i) => (
+                          {(recipe.ingredients || []).map((ingredient, i) => (
                             <li key={i}>{ingredient}</li>
                           ))}
                         </ul>
                         <h3>Hướng dẫn:</h3>
-                        <p>{recipe.instructions}</p>
+                        <p>{recipe.instructions || "Không có hướng dẫn"}</p>
                       </Card>
                     )}
                   </Col>
                 );
               }
             })
+          ) : (
+            <p>Không có công thức nào để hiển thị.</p>
           )}
         </Row>
       </Content>

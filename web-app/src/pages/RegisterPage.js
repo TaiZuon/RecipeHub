@@ -26,17 +26,12 @@ const RegisterPage = () => {
 
     try {
       setLoading(true);
-      console.log(dob)
+      console.log(dob);
       const response = await axios.post(
         "http://localhost:8080/api/auth/register",
-        {username,
-        password,
-        role: "USER",
-        fullName,
-        dob,
-        city,}
+        { username, password, role: "USER", fullName, dob, city }
       );
-      
+
       message.success("Đăng ký thành công!");
       console.log("Response: ", response.data);
       navigate("/login");
