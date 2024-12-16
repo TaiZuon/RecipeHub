@@ -211,6 +211,25 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeMapper.recipeToRecipeDto(recipe);
     }
 
+    public void approveRecipe(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Recipe."));
+        if (recipe.getStatus() != RecipeStatus.PENDING) {
+            throw new RuntimeException("Recipe không ở trạng thái PENDING.");
+        }
+        recipe.setStatus(RecipeStatus.APPROVED);
+        recipeRepository.save(recipe);
+    }
+
+    public void rejectRecipe(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Recipe."));
+        if (recipe.getStatus() != RecipeStatus.PENDING) {
+            throw new RuntimeException("Recipe không ở trạng thái PENDING.");
+        }
+        recipe.setStatus(RecipeStatus.REJECTED);
+        recipeRepository.save(recipe);
+    }
 //    public Page<Recipe> searchRecipes(String name, CategoryType categoryType, RecipeStatus status,
 //                                      int page, int size, String sortField, Sort.Direction sortDirection) {
 //
@@ -222,4 +241,12 @@ public class RecipeServiceImpl implements RecipeService {
 //        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
 //        return recipeRepository.findAll(spec, pageable);
 //    }
+
+    @Override
+    public List<RecipeResponse> getRecipesByStatus(RecipeStatus status) {
+        List<Recipe> recipes = recipeRepository.findByStatus(status);
+        return recipes.stream()
+                .map(recipeMapper::toPostResponse)
+                .collect(Collectors.toList());
+    }
 }

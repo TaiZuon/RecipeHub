@@ -26,7 +26,7 @@ export const Chat = () => {
     const fetchRooms = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await chatService.getRooms();
+            const response = await chatService.getRooms(currentUserId);
             console.log(response);
             const sortedRooms = response.sort((a, b) => {
                 const timeA = new Date(a.lastMessage?.timestamp || 0);
@@ -135,17 +135,17 @@ export const Chat = () => {
         }
     }, [selectedRoom?.id]);
 
-    // const handleChatClick = async (otherUserId) => {
-    //     try {
-    //         const room = await chatService.getOrCreateRoom(otherUserId);
-    //     } catch (error) {
-    //         console.error('Error sending room:', error);
-    //     }
-    // }
-
-    const handleDeleteRoom = useCallback(async (roomId) => {
+    const handleChatClick = async (currentUserId, otherUserId) => {
         try {
-            await chatService.deleteRoom(roomId);
+            const room = await chatService.getOrCreateRoom(currentUserId, otherUserId);
+        } catch (error) {
+            console.error('Error sending room:', error);
+        }
+    }
+
+    const handleDeleteRoom = useCallback(async (roomId, currentUserId) => {
+        try {
+            await chatService.deleteRoom(roomId, currentUserId);
             setRooms(prevRooms => prevRooms.filter(room => room.id !== roomId));
 
         } catch (error) {

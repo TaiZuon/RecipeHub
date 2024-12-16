@@ -18,6 +18,10 @@ public interface RecipeService {
     void deleteRecipe(Long recipeId);
     RecipeDto updateRecipe(Long id, RecipeUpdateRequest request);
     RecipeDto updateStatus(Long id, RecipeStatus status) throws Exception;
+    void approveRecipe(Long recipeId);
+    void rejectRecipe(Long recipeId);
+    List<RecipeResponse> getRecipesByStatus(RecipeStatus status);
+
 //    Page<Recipe> searchRecipes(String name, RecipeStatus status,
 //                               int page, int size, String sortField, Sort.Direction sortDirection);
 }

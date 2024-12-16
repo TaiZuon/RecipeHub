@@ -9,4 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface AuthClient {
     @GetMapping("/api/auth/{userId}")
     UserResponse getUserById(@PathVariable("userId") Long userId);
+
+    @GetMapping("api/auth/{userId}/role")
+    String getUserRoles(@PathVariable("userName") String userName);
 }

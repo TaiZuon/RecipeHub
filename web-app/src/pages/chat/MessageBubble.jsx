@@ -5,7 +5,7 @@ const MessageBubble = ({ message, isConsecutive, currentUserId }) => {
     const isSentByMe = message.sender.id === currentUserId;
     const isImage = message.type === 'IMAGE';
     const isFile = message.type === 'FILE';
-
+    // console.log('MessageBubble:', message);
     const handleFileClick = () => {
         if (message.fileUrl) {
             window.open(message.fileUrl, '_blank');
@@ -20,12 +20,12 @@ const MessageBubble = ({ message, isConsecutive, currentUserId }) => {
             <div className={`flex-shrink-0 w-8 ${isSentByMe ? 'order-2 ml-2' : 'mr-2'}`}>
                 {!isConsecutive && !isSentByMe && (
                     <div className="flex flex-col items-center">
-                        <img
+                        {/* <img
                             src={message.sender.profile?.avatarUrl || "/default-avatar.png"}
                             alt="avatar"
                             className="w-8 h-8 rounded-full object-cover border border-gray-200"
                             loading="lazy"
-                        />
+                        /> */}
                     </div>
                 )}
             </div>
@@ -36,7 +36,7 @@ const MessageBubble = ({ message, isConsecutive, currentUserId }) => {
                 {/* Sender Name */}
                 {!isConsecutive && !isSentByMe && (
                     <span className="text-xs text-gray-500 mb-1 ml-1 font-medium line-clamp-1">
-                        {message.sender.profile?.name || message.sender.email}
+                        {message.sender.userName}
                     </span>
                 )}
 

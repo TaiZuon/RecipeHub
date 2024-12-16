@@ -93,4 +93,9 @@ public class AuthController {
     public UserResponse getUserById(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
+
+    @GetMapping("/{userId}/role")
+    public String getUserRole(@PathVariable String userName) {
+        return userService.getUserRole(userName);
+    }
 }

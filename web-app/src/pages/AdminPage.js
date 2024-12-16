@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 // import { Layout, Table, Button, message } from "antd";
 import axios from "axios";
 
+
 // const { Header, Content, Footer } = Layout;
 
 // Hàm để cấm người dùng
@@ -24,8 +25,52 @@ const handleActivateUser = async (username, fetchUsers) => {
   }
 };
 
+
 const AdminPage = () => {
   const [userData, setUserData] = useState([]); // Dữ liệu người dùng
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPendingRecipes();
+  }, []);
+
+  const fetchPendingRecipes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://localhost:8082/api/recipes/status", {
+        params: { status: "PENDING" }
+      });
+      setRecipes(response.data);
+    } catch (error) {
+      console.error("Error fetching pending recipes:", error);
+      // alert("Error fetching pending recipes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (recipeId) => {
+    try {
+      await axios.post(`http://localhost:8082/api/recipes/${recipeId}/approve`);
+      alert("Recipe approved successfully");
+      fetchPendingRecipes();
+    } catch (error) {
+      console.error("Error approving recipe:", error);
+      alert("Error approving recipe");
+    }
+  };
+
+  const handleReject = async (recipeId) => {
+    try {
+      await axios.post(`http://localhost:8082/api/recipes/${recipeId}/reject`);
+      alert("Recipe rejected successfully");
+      fetchPendingRecipes();
+    } catch (error) {
+      console.error("Error rejecting recipe:", error);
+      alert("Error rejecting recipe");
+    }
+  };
 
   // Lấy danh sách người dùng từ API
   const fetchUsers = async () => {
@@ -130,6 +175,51 @@ const AdminPage = () => {
             </tbody>
           </table>
         </div>
+        
+      </main>
+      <header className="bg-blue-600 text-white p-4">
+        <h1 className="text-2xl">Admin - Manage Pending Recipes</h1>
+      </header>
+      <main className="container mx-auto p-4">
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b">Image</th>
+                <th className="py-2 px-4 border-b">Title</th>
+                <th className="py-2 px-4 border-b">Description</th>
+                <th className="py-2 px-4 border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recipes.map((recipe) => (
+                <tr key={recipe.id}>
+                  <td className="py-2 px-4 border-b">
+                    <img className="w-20 h-20 rounded-md" src={recipe.recipeImages} alt="Item" />
+                  </td>
+                  <td className="py-2 px-4 border-b">{recipe.title}</td>
+                  <td className="py-2 px-4 border-b">{recipe.description}</td>
+                  <td className="py-2 px-4 border-b">
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                      onClick={() => handleApprove(recipe.id)}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded"
+                      onClick={() => handleReject(recipe.id)}
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </main>
       <footer className="bg-gray-800 text-white text-center py-4">
         ©2024 RecipeHub

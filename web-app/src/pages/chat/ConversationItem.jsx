@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical, Archive, Trash2 } from 'lucide-react';
-import { chatService } from '../../service/chatService';
 import { jwtDecode } from "jwt-decode";
 
 const ConversationItem = ({ room, isActive, onSelect, onDelete }) => {
@@ -67,7 +66,7 @@ const ConversationItem = ({ room, isActive, onSelect, onDelete }) => {
 
     const otherParticipant = getOtherParticipant();
     const unread = isUnreadMessage();
-
+    console.log(otherParticipant)
     const handleDeleteRoom = async (e) => {
         try {
             await onDelete(room.id);
@@ -86,17 +85,16 @@ const ConversationItem = ({ room, isActive, onSelect, onDelete }) => {
         >
             <div className="flex items-center space-x-3">
                 <div className="relative">
-                    <img
-                        src={otherParticipant.profile?.avatarUrl || "/default-avatar.png"}
-                        alt={otherParticipant.profile?.name || otherParticipant.email}
+                    {/* <img
+                        alt={otherParticipant.userName}
                         className="w-12 h-12 rounded-full object-cover"
-                    />
+                    /> */}
                     <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white"/>
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                         <h2 className={`text-[15px] ${unread ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'} truncate`}>
-                            {otherParticipant.profile?.name || otherParticipant.email}
+                            {otherParticipant.userName}
                         </h2>
                         <div className="flex items-center space-x-2">
                             <span className={`text-[11px] whitespace-nowrap ${unread ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>

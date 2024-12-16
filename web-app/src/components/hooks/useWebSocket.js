@@ -17,7 +17,7 @@ export const useWebSocket = (userId, onMessageReceived, onChatMessageReceived) =
             }
             console.log("[WebSocket] Connected successfully. User:", userId);
 
-            const token = localStorage.getItem('accessToken');
+            const token = localStorage.getItem('authToken');
             if (!token) {
                 console.warn("ws connection aborted: Missing token");
                 return;

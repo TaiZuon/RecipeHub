@@ -9,6 +9,7 @@ import com.recipehub.recipe_service.dto.response.PageResponse;
 import com.recipehub.recipe_service.dto.response.RecipeResponse;
 import com.recipehub.recipe_service.mapper.RecipeMapper;
 import com.recipehub.recipe_service.model.Recipe;
+import com.recipehub.recipe_service.repository.httpClient.AuthClient;
 import com.recipehub.recipe_service.service.RecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,7 @@ import static java.util.stream.Stream.builder;
 public class RecipeController {
     private final RecipeService recipeService;
     private final RecipeMapper recipeMapper;
+    private final AuthClient authServiceClient;
 
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
@@ -106,5 +109,34 @@ public class RecipeController {
     public ResponseEntity<?> deleteRecipe(@PathVariable Long id) {
         recipeService.deleteRecipe(id);
         return ResponseEntity.ok("Successfully deleted recipe id " + id);
+    }
+
+    @PutMapping("/{recipeId}/approve")
+    public ResponseEntity<String> approveRecipe(@PathVariable Long recipeId, @RequestHeader("userName") String userName) {
+        // Xác minh quyền Admin từ AuthService
+        String role = authServiceClient.getUserRoles(userName);
+        if (!role.contains("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn không có quyền thực hiện thao tác này.");
+        }
+        recipeService.approveRecipe(recipeId);
+        return ResponseEntity.ok("Recipe đã được duyệt.");
+    }
+
+    @PutMapping("/{recipeId}/reject")
+    public ResponseEntity<String> rejectRecipe(@PathVariable Long recipeId, @RequestHeader("userName") String userName) {
+        // Xác minh quyền Admin từ AuthService
+        String role = authServiceClient.getUserRoles(userName);
+        if (!role.contains("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn không có quyền thực hiện thao tác này.");
+        }
+        recipeService.rejectRecipe(recipeId);
+        return ResponseEntity.ok("Recipe đã bị từ chối.");
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/status")
+    public ResponseEntity<List<RecipeResponse>> getRecipesByStatus(@RequestParam RecipeStatus status) {
+        List<RecipeResponse> recipes = recipeService.getRecipesByStatus(status);
+        return ResponseEntity.ok(recipes);
     }
 }

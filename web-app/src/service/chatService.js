@@ -4,9 +4,12 @@ const API_BASE_URL = "http://localhost:8080";
 
 
 export const chatService = {
-    getRooms: async () => {
+    getRooms: async (userId) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/api/chat/rooms`);
+            console.log("hihih" +userId);
+            const response = await axios.get(`${API_BASE_URL}/api/chat/rooms`, {
+                params: { userId }
+            });
             return response.data;
         } catch (error) {
             console.error('Error fetching rooms:', error);
@@ -14,10 +17,11 @@ export const chatService = {
         }
     },
 
-    getOrCreateRoom: async (otherUserId) => {
+    getOrCreateRoom: async (userId, otherUserId) => {
         try {
+            console.log(userId, otherUserId);
             const response = await axios.post(`${API_BASE_URL}/api/chat/get-or-create-room`, null, {
-                params: { otherUserId }
+                params: {userId, otherUserId }
             });
             return response.data;
         } catch (error) {
@@ -26,9 +30,11 @@ export const chatService = {
         }
     },
 
-    deleteRoom: async (roomId) => {
+    deleteRoom: async (roomId, userId) => {
         try {
-            const response = await axios.delete(`${API_BASE_URL}/api/chat/room/${roomId}`);
+            const response = await axios.delete(`${API_BASE_URL}/api/chat/room/${roomId}`, {
+                params: { userId }
+            });
             return response.data;
         } catch (error) {
             console.error('Error deleting room:', error);
@@ -36,11 +42,13 @@ export const chatService = {
         }
     },
 
-    updateMessageStatus: async (roomId, messageIds, status) => {
+    updateMessageStatus: async (roomId, messageIds, status, userId) => {
         try {
             const response = await axios.post(`${API_BASE_URL}/api/chat/room/${roomId}/messages/status`, {
                 messageIds,
                 status
+            }, {
+                params: { userId }
             });
             return response.data;
         } catch (error) {
@@ -49,23 +57,23 @@ export const chatService = {
         }
     },
 
-    markMessagesAsRead: async (roomId, messages) => {
+    markMessagesAsRead: async (roomId, messages, userId) => {
         try {
             const unreadMessages = messages.filter(msg => msg.status !== 'READ');
             if (unreadMessages.length === 0) return;
 
             const messageIds = unreadMessages.map(msg => msg.id);
-            await chatService.updateMessageStatus(roomId, messageIds, 'READ');
+            await chatService.updateMessageStatus(roomId, messageIds, 'READ', userId);
         } catch (error) {
             console.error('Error marking messages as read:', error);
             throw error;
         }
     },
 
-    getMessages: async (roomId, page = 0, size = 20) => {
+    getMessages: async (roomId, userId, page = 0, size = 20) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/api/chat/room/${roomId}/messages`, {
-                params: { page, size }
+                params: { userId, page, size }
             });
             return response.data;
         } catch (error) {
@@ -74,9 +82,11 @@ export const chatService = {
         }
     },
 
-    sendMessage: async (roomId, message) => {
+    sendMessage: async (roomId, userId, message) => {
         try {
-            const response = await axios.post(`${API_BASE_URL}/api/chat/room/${roomId}/message`, message);
+            const response = await axios.post(`${API_BASE_URL}/api/chat/room/${roomId}/message`, message, {
+                params: { userId }
+            });
             return response.data;
         } catch (error) {
             console.error('Error sending message:', error);
@@ -84,7 +94,7 @@ export const chatService = {
         }
     },
 
-    sendFileMessage: async (roomId, { file, type }) => {
+    sendFileMessage: async (roomId, userId, { file, type }) => {
         try {
             let fileUrl;
             if (type === 'IMAGE') {
@@ -94,7 +104,7 @@ export const chatService = {
                     maxSize: 20 * 1024 * 1024, // 20MB
                 });            }
 
-            return await chatService.sendMessage(roomId, {
+            return await chatService.sendMessage(roomId, userId, {
                 content: file.name,
                 type: type,
                 fileUrl: fileUrl

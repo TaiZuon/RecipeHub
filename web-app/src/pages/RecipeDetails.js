@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getRecipe } from "../service/recipeService";
 import { getUserById } from "../service/userService";
+import { jwtDecode } from "jwt-decode";
+import { chatService } from "../service/chatService";
+
 
 const RecipeDetails = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [creator, setCreator] = useState(null);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("authToken");
+  const decodedToken = jwtDecode(token);
+  const currentUserId = decodedToken.sub;
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -20,6 +27,7 @@ const RecipeDetails = () => {
           if (creatorResponse?.data) {
             setCreator(creatorResponse.data);
           }
+          // console.log(response.data);
         }
       } catch (error) {
         console.error("Không thể tải dữ liệu công thức!", error);
@@ -30,6 +38,16 @@ const RecipeDetails = () => {
 
     fetchRecipe();
   }, [id]);
+
+  const handleChatClick = async () => {
+    try {
+
+      const room = await chatService.getOrCreateRoom(currentUserId, creator.id);
+      navigate(`/chat?roomId=${room.id}`);
+    } catch (error) {
+      console.error("Error creating or getting chat room:", error);
+    }
+  };
 
   if (loading) {
     return <p className="text-center mt-10">Đang tải...</p>;
@@ -72,6 +90,14 @@ const RecipeDetails = () => {
             ))}
           </div>
         </div>
+        <div className="mt-4">
+            <button
+              className="bg-green-500 text-white p-2 rounded"
+              onClick={handleChatClick}
+            >
+              Chat
+            </button>
+          </div>
       </main>
 
       <footer className="bg-gray-800 text-white py-4 text-center">

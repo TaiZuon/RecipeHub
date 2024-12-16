@@ -27,24 +27,25 @@ public class ChatController {
     private static final Long DEFAULT_USER_ID = 1L; // Use a valid default user ID
 
     @GetMapping("/rooms")
-    public ResponseEntity<List<ChatRoomDTO>> getUserRooms() {
-        return ResponseEntity.ok(chatService.getUserRooms(DEFAULT_USER_ID.toString()));
+    public ResponseEntity<List<ChatRoomDTO>> getUserRooms(@RequestParam Long userId) {
+        return ResponseEntity.ok(chatService.getUserRooms(userId.toString()));
     }
 
     @PostMapping("/get-or-create-room")
-    public ResponseEntity<ChatRoomDTO> getOrCreateRoom(@RequestParam Long otherUserId) {
-        ChatRoomDTO room = chatService.getOrCreateRoom(DEFAULT_USER_ID.toString(), otherUserId.toString());
+    public ResponseEntity<ChatRoomDTO> getOrCreateRoom(@RequestParam Long userId,@RequestParam Long otherUserId) {
+        ChatRoomDTO room = chatService.getOrCreateRoom(userId.toString(), otherUserId.toString());
         return ResponseEntity.ok(room);
     }
 
     @GetMapping("/room/{roomId}/messages")
     public ResponseEntity<Page<MessageDTO>> getRoomMessages(
             @PathVariable Long roomId,
+            @RequestParam Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(chatService.getRoomMessages(
                 roomId,
-                DEFAULT_USER_ID.toString(),
+                userId.toString(),
                 page,
                 size
         ));
@@ -53,9 +54,10 @@ public class ChatController {
     @PostMapping("/room/{roomId}/message")
     public ResponseEntity<MessageDTO> sendMessage(
             @PathVariable Long roomId,
+            @RequestParam Long userId,
             @Valid @RequestBody MessageRequest message) {
         return ResponseEntity.ok(chatService.sendMessage(
-                DEFAULT_USER_ID.toString(),
+                userId.toString(),
                 roomId,
                 message
         ));
@@ -64,10 +66,11 @@ public class ChatController {
     @PostMapping("/room/{roomId}/messages/status")
     public ResponseEntity<Void> updateMessageStatus(
             @PathVariable Long roomId,
+            @RequestParam Long userId,
             @RequestBody MessageStatusRequest request) {
         chatService.updateMessageStatus(
                 roomId,
-                DEFAULT_USER_ID.toString(),
+                userId.toString(),
                 request.getMessageIds(),
                 request.getStatus()
         );
@@ -78,12 +81,13 @@ public class ChatController {
     @GetMapping("/room/{roomId}/messages/before")
     public ResponseEntity<Page<MessageDTO>> getMessagesBefore(
             @PathVariable Long roomId,
+            @RequestParam Long userId,
             @RequestParam LocalDateTime timestamp,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(chatService.getMessagesBefore(
                 roomId,
-                DEFAULT_USER_ID.toString(),
+                userId.toString(),
                 timestamp,
                 page,
                 size
@@ -91,8 +95,8 @@ public class ChatController {
     }
 
     @DeleteMapping("/room/{roomId}")
-    public ResponseEntity<String> deleteRoom(@PathVariable Long roomId) {
-        chatService.deleteRoom(roomId, DEFAULT_USER_ID.toString());
+    public ResponseEntity<String> deleteRoom(@PathVariable Long roomId, @RequestParam Long userId) {
+        chatService.deleteRoom(roomId, userId.toString());
         return ResponseEntity.ok("Chatroom deleted");
     }
 }

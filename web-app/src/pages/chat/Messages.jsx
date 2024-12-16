@@ -3,6 +3,7 @@ import { ImageIcon, SendHorizontal, FileText, Phone, Video, MoreVertical } from 
 import { chatService } from '../../service/chatService';
 import MessageBubble from './MessageBubble';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { jwtDecode } from "jwt-decode";
 
 const Messages = ({
                       selectedRoom,
@@ -23,6 +24,9 @@ const Messages = ({
     const messagesContainerRef = useRef(null);
     const inputRef = useRef(null);
     const PAGE_SIZE = 20;
+    const token = localStorage.getItem("authToken");
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.sub;
 
     // Auto scroll to bottom when new messages arrive
     useEffect(() => {
@@ -51,7 +55,7 @@ const Messages = ({
                 );
 
                 if (unreadMessages.length > 0) {
-                    await chatService.markMessagesAsRead(selectedRoom.id, unreadMessages);
+                    await chatService.markMessagesAsRead(selectedRoom.id, unreadMessages, userId);
 
                     // Update local messages state
                     setMessages(prev => prev.map(msg =>
@@ -89,7 +93,7 @@ const Messages = ({
             const nextPage = page + 1;
             const timestamp = messages[0]?.timestamp;
 
-            const response = await chatService.getMessages(selectedRoom.id, nextPage, PAGE_SIZE);
+            const response = await chatService.getMessages(selectedRoom.id, userId, nextPage, PAGE_SIZE);
             const newMessages = response?.content || [];
 
             if (newMessages.length > 0) {
@@ -119,7 +123,7 @@ const Messages = ({
         if (!selectedRoom) return;
         try {
             setLoading(true);
-            const data = await chatService.getMessages(selectedRoom.id, 0, PAGE_SIZE);
+            const data = await chatService.getMessages(selectedRoom.id, userId, 0, PAGE_SIZE);
             if (data?.content) {
                 setMessages([...data.content].reverse());
                 setHasMore(data.content.length === PAGE_SIZE);
@@ -150,7 +154,7 @@ const Messages = ({
                 content: inputValue.trim(),
                 type: 'TEXT'
             };
-            const newMessage = await chatService.sendMessage(selectedRoom.id, message);
+            const newMessage = await chatService.sendMessage(selectedRoom.id, userId, message);
             if (newMessage) {
                 setMessages(prev => [...prev, newMessage]);
                 onNewMessage(newMessage);
@@ -182,7 +186,7 @@ const Messages = ({
 
         try {
             setLoading(true);
-            const newMessage = await chatService.sendFileMessage(selectedRoom.id, { file, type });
+            const newMessage = await chatService.sendFileMessage(selectedRoom.id, userId, { file, type });
             if (newMessage) {
                 setMessages(prev => [...prev, newMessage]);
                 onNewMessage(newMessage);
@@ -198,7 +202,8 @@ const Messages = ({
 
     const getOtherParticipant = (room) => {
         if (!room) return null;
-        return room.user1.id === currentUserId ? room.user2 : room.user1;
+        // console.log("hihihihi" + room.user2.id)
+        return room.user1.id === userId ? room.user2 : room.user1;
     };
 
     if (!selectedRoom) {
@@ -219,14 +224,13 @@ const Messages = ({
             {/* Chat Header */}
             <div className="px-4 py-3 border-b flex items-center justify-between bg-white shadow-sm">
                 <div className="flex items-center space-x-3">
-                    <img
-                        src={otherParticipant?.profile?.avatarUrl || "/default-avatar.png"}
-                        alt={otherParticipant?.profile?.name || otherParticipant?.email || "User"}
+                    {/* <img
+                        alt={otherParticipant?.userName || "User"}
                         className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
-                    />
+                    /> */}
                     <div>
                         <h2 className="text-base font-semibold text-gray-900">
-                            {otherParticipant?.profile?.name || otherParticipant?.email || "User"}
+                            { otherParticipant?.userName || "User"}
                         </h2>
                     </div>
                 </div>

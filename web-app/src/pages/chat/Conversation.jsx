@@ -7,7 +7,7 @@ const Conversation = ({ rooms, loading, onSelectRoom, selectedRoomId, onDeleteRo
 
     const filteredRooms = searchQuery
         ? rooms.filter(room =>
-            room.user2.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            room.user2.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (room.lastMessage?.content || '').toLowerCase().includes(searchQuery.toLowerCase())
         )
         : rooms;

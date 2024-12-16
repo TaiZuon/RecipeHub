@@ -69,8 +69,8 @@ public class UserService {
     }
 
     // Phương thức lấy thông tin role của người dùng
-    public String getUserRole(String username) {
-        User user = userRepository.findByUsername(username)
+    public String getUserRole(String userName) {
+        User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user != null ? user.getRole().name() : null; // Trả về tên của enum dưới dạng chuỗi
     }
