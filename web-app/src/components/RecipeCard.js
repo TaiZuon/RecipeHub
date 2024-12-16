@@ -1,21 +1,24 @@
-// RecipeCard.js
 import React from "react";
-import { Card, Col } from "antd";
 import { Link } from "react-router-dom";
 
 const RecipeCard = ({ recipe, lastPostElementCallback }) => {
   return (
-    <Col span={8} key={recipe.recipeId} ref={lastPostElementCallback}>
-      <Card
-        title={recipe.title}
-        extra={<Link to={`/recipe/${recipe.recipeId}`}>Xem chi tiết</Link>}
-        cover={
-          <img alt={recipe.title} src={recipe.recipeImages[0]?.imageUrl} />
-        }
-      >
-        {recipe.description}
-      </Card>
-    </Col>
+    <div className="w-full md:w-1/3 p-2" ref={lastPostElementCallback}>
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <img
+          alt={recipe.title}
+          src={recipe.recipeImages[0]?.imageUrl}
+          className="w-full h-48 object-cover"
+        />
+        <div className="p-4">
+          <h3 className="text-lg font-bold">{recipe.title}</h3>
+          <p>{recipe.description}</p>
+          <Link to={`/recipe/${recipe.recipeId}`} className="text-blue-600">
+            Xem chi tiết
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 };
 

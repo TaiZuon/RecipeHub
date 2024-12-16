@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu } from "antd";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-const { Header } = Layout;
+import { Link, useNavigate } from "react-router-dom";
 
 const AppHeader = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,44 +14,47 @@ const AppHeader = () => {
   const toggleLogin = () => {
     if (isLoggedIn) {
       // Xử lý đăng xuất
-      localStorage.removeItem("token");
+      localStorage.removeItem("authToken");
+      navigate("/login");
     }
     setIsLoggedIn(!isLoggedIn);
   };
 
   return (
-    <Layout>
-      <Header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ color: "white", fontSize: "20px" }}>
-          <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-            RecipeHub
-          </Link>
-        </div>
-        <Menu theme="dark" mode="horizontal">
-          <Menu.Item key="home">
-            <Link to="/">Home</Link>
-          </Menu.Item>
-          <Menu.Item key="add-recipe">
-            <Link to="/add-recipe">Add Recipe</Link>
-          </Menu.Item>
-          <Menu.Item key="add-ingredient">
-            <Link to="/add-ingredient">Add Ingredient</Link>
-          </Menu.Item>
-          <Menu.Item key="profile">
-            <Link to="/profile">Profile</Link>
-          </Menu.Item>
-          <Menu.Item key="login-logout" onClick={toggleLogin}>
-            <Link to="/login">{isLoggedIn ? "Log out" : "Log in"}</Link>
-          </Menu.Item>
-        </Menu>
-      </Header>
-    </Layout>
+    <header className="bg-blue-600 text-white flex justify-between items-center p-4">
+      <div className="text-2xl">
+        <Link to="/" className="text-white no-underline">
+          RecipeHub
+        </Link>
+      </div>
+      <nav>
+        <ul className="flex space-x-4">
+          <li>
+            <Link to="/" className="text-white no-underline">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/profile" className="text-white no-underline">
+              Profile
+            </Link>
+          </li>
+          <li>
+            <Link to="/chat" className="text-white no-underline">
+              Chat
+            </Link>
+          </li>
+          <li>
+            <button
+              onClick={toggleLogin}
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+              {isLoggedIn ? "Logout" : "Login"}
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </header>
   );
 };
 

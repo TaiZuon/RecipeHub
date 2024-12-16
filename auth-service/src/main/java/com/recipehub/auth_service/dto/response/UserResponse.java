@@ -1,5 +1,6 @@
 package com.recipehub.auth_service.dto.response;
 
+import com.recipehub.auth_service.Enum.UserRole;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,5 +12,5 @@ import lombok.experimental.FieldDefaults;
 public class UserResponse {
     Long id;
     String username;
-    String role;
+    UserRole role;
 }

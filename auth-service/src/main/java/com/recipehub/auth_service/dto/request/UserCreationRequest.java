@@ -1,12 +1,11 @@
 package com.recipehub.auth_service.dto.request;
 
 
-import com.recipehub.auth_service.entity.UserRole;
+import com.recipehub.auth_service.Enum.UserRole;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor

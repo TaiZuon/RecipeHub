@@ -1,93 +1,84 @@
 import React, { useState } from "react";
-import { Layout, Form, Input, Button, Upload, message } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
 import AppHeader from "../components/AppHeader";
 import axios from "axios";
 import fileUtils from "../utils/fileUtils";
-import { jwtDecode } from 'jwt-decode';
-
-const { Content, Footer } = Layout;
+import { jwtDecode } from "jwt-decode";
 
 const AddIngredientPage = () => {
   const [fileList, setFileList] = useState([]);
 
-  const handleChange = ({ fileList }) => setFileList(fileList);
+  const handleChange = (e) => setFileList(e.target.files);
 
-  const onFinish = async (values) => {
+  const onFinish = async (e) => {
+    e.preventDefault();
+    const values = new FormData(e.target);
     const token = localStorage.getItem("authToken");
     const decodedToken = jwtDecode(token);
-    // console.log(decodedToken);
-
     const userId = decodedToken.sub;
 
     const imageUrls = [];
 
-    // Loop through the selected files and upload them
     for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i].originFileObj;
+      const file = fileList[i];
       try {
         const imageUrl = await fileUtils.uploadImage(file, `ingredients/${userId}`);
-        
-        imageUrls.push({ imageUrl, isPrimary: i === 0 }); // Set the first image as primary
-        console.log("Uploaded image URL: ", imageUrl);
+        imageUrls.push({ imageUrl, isPrimary: i === 0 });
       } catch (error) {
-        message.error("Đã xảy ra lỗi khi tải lên hình ảnh!");
         console.error("Error: ", error);
         return;
       }
     }
 
-    // Construct the IngredientRequest object
     const ingredientRequest = {
-      name: values.ingredientName,
-      imageUrls
+      name: values.get("ingredientName"),
+      imageUrls,
     };
 
     try {
       const response = await axios.post("http://localhost:8081/api/ingredients", ingredientRequest);
-      message.success("Nguyên liệu đã được thêm thành công!");
       console.log("Received values: ", response.data);
     } catch (error) {
-      message.error("Đã xảy ra lỗi khi thêm nguyên liệu!");
       console.error("Error: ", error);
     }
   };
 
   return (
-    <Layout>
+    <div className="min-h-screen flex flex-col">
       <AppHeader />
-      <Content style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-        <h1 style={{ textAlign: "center" }}>Thêm nguyên liệu</h1>
-        <Form name="add-ingredient" onFinish={onFinish}>
-          <Form.Item
-            name="ingredientName"
-            rules={[{ required: true, message: "Hãy nhập tên nguyên liệu!" }]}
-          >
-            <Input placeholder="Tên nguyên liệu" />
-          </Form.Item>
-          <Form.Item
-            name="images"
-            rules={[{ required: true, message: "Hãy chọn hình ảnh!" }]}
-          >
-            <Upload
+      <main className="flex-grow p-4 max-w-md mx-auto">
+        <h1 className="text-center text-2xl mb-4">Thêm nguyên liệu</h1>
+        <form onSubmit={onFinish} className="space-y-4">
+          <div>
+            <label className="block mb-1">Tên nguyên liệu</label>
+            <input
+              type="text"
+              name="ingredientName"
+              required
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Hình ảnh</label>
+            <input
+              type="file"
+              name="images"
               multiple
-              listType="picture"
-              fileList={fileList}
               onChange={handleChange}
-              beforeUpload={() => false}
-            >
-              <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Thêm nguyên liệu
-            </Button>
-          </Form.Item>
-        </Form>
-      </Content>
-      <Footer style={{ textAlign: "center" }}>©2024 RecipeHub</Footer>
-    </Layout>
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded"
+          >
+            Thêm nguyên liệu
+          </button>
+        </form>
+      </main>
+      <footer className="bg-gray-800 text-white text-center py-4">
+        ©2024 RecipeHub
+      </footer>
+    </div>
   );
 };
 

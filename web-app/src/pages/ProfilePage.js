@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Card, Button, message, Form, Input, Modal } from "antd";
 import AppHeader from "../components/AppHeader";
 import { jwtDecode } from "jwt-decode";
 import { getProfile, updateProfile } from "../service/userService";
-
-const { Content, Footer } = Layout;
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
+  const [formData, setFormData] = useState({
+    fullName: "",
+    dob: "",
+    city: "",
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -21,20 +22,20 @@ const ProfilePage = () => {
       try {
         const response = await getProfile(profileId);
         setProfile(response.data);
-        form.setFieldsValue({
+        setFormData({
           fullName: response.data.fullName,
-          dob: response.data.dob, // Make sure the format is correct for input[type="date"]
+          dob: response.data.dob,
           city: response.data.city,
         });
       } catch (error) {
-        message.error("Không thể tải dữ liệu hồ sơ!");
+        alert("Không thể tải dữ liệu hồ sơ!");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [form]);
+  }, []);
 
   if (loading) {
     return <p>Đang tải...</p>;
@@ -45,11 +46,6 @@ const ProfilePage = () => {
   }
 
   const showModal = () => {
-    form.setFieldsValue({
-      fullName: profile.fullName,
-      dob: profile.dob, // Ensure correct date format
-      city: profile.city,
-    });
     setIsModalVisible(true);
   };
 
@@ -57,65 +53,129 @@ const ProfilePage = () => {
     setIsModalVisible(false);
   };
 
-  const handleUpdateProfile = async (values) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
     const token = localStorage.getItem("authToken");
     const decodedToken = jwtDecode(token);
     const profileId = decodedToken.sub;
 
     try {
-      const response = await updateProfile(profileId, values);
-      setProfile(response.data); // Cập nhật lại state profile
-      message.success("Hồ sơ đã được cập nhật thành công!");
+      const response = await updateProfile(profileId, formData);
+      setProfile(response.data);
+      alert("Hồ sơ đã được cập nhật thành công!");
       setIsModalVisible(false);
     } catch (error) {
-      message.error("Không thể cập nhật hồ sơ!");
+      alert("Không thể cập nhật hồ sơ!");
     }
   };
 
   return (
-    <Layout>
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
       <AppHeader />
-      <Content style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-        <Card title="Hồ sơ của tôi">
+
+      {/* Content */}
+      <main className="flex-grow p-6 max-w-xl mx-auto">
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h1 className="text-xl font-bold mb-4">Hồ sơ của tôi</h1>
           <p>
-            <strong>Tên người dùng:</strong> {profile.fullName}
+            <strong className="font-semibold">Tên người dùng:</strong> {profile.fullName}
           </p>
           <p>
-            <strong>Ngày sinh:</strong> {profile.dob}
+            <strong className="font-semibold">Ngày sinh:</strong> {profile.dob}
           </p>
           <p>
-            <strong>Thành phố:</strong> {profile.city}
+            <strong className="font-semibold">Thành phố:</strong> {profile.city}
           </p>
-          <Button type="primary" style={{ marginTop: "10px" }} onClick={showModal}>
+          <button
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            onClick={showModal}
+          >
             Chỉnh sửa hồ sơ
-          </Button>
-        </Card>
-      </Content>
-      <Footer style={{ textAlign: "center" }}>©2024 RecipeHub</Footer>
-      <Modal
-        title="Chỉnh sửa hồ sơ"
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <Form form={form} onFinish={handleUpdateProfile}>
-          <Form.Item name="fullName" label="Tên người dùng">
-            <Input />
-          </Form.Item>
-          <Form.Item name="dob" label="Ngày tháng năm sinh">
-            <Input type="date" />
-          </Form.Item>
-          <Form.Item name="city" label="Thành phố">
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Cập nhật
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </Layout>
+          </button>
+        </div>
+      </main>
+
+      {/* Modal */}
+      {isModalVisible && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-lg w-96 p-6">
+            <h2 className="text-lg font-bold mb-4">Chỉnh sửa hồ sơ</h2>
+            <form onSubmit={handleUpdateProfile} className="space-y-4">
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                  Tên người dùng
+                </label>
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
+                  Ngày tháng năm sinh
+                </label>
+                <input
+                  id="dob"
+                  name="dob"
+                  type="date"
+                  value={formData.dob}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                  Thành phố
+                </label>
+                <textarea
+                  id="city"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                ></textarea>
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Cập nhật
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="bg-gray-100 text-center py-4 text-sm text-gray-500">
+        ©2024 RecipeHub
+      </footer>
+    </div>
   );
 };
 

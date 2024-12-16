@@ -3,14 +3,14 @@ package com.recipehub.auth_service.service;
 import com.recipehub.auth_service.dto.request.UserCreationRequest;
 import com.recipehub.auth_service.dto.response.UserResponse;
 import com.recipehub.auth_service.entity.User;
-import com.recipehub.auth_service.entity.UserRole;
 import com.recipehub.auth_service.mapper.ProfileMapper;
-import com.recipehub.auth_service.mapper.UserMapper;
+import com.recipehub.auth_service.mapper.UserMapperImpl;
 import com.recipehub.auth_service.repository.UserRepository;
-import com.recipehub.auth_service.entity.UserStatus; // Import enum UserStatus
+import com.recipehub.auth_service.Enum.UserStatus; // Import enum UserStatus
 import com.recipehub.auth_service.repository.httpClient.ProfileClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +25,12 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final ProfileClient profileClient;
     private final ProfileMapper profileMapper;
-    private final UserMapper userMapper;
+    private final UserMapperImpl userMapper;
 
     public boolean registerUser(UserCreationRequest request) {
-        if (userRepository.findByUsername(request.getUsername()) != null) {
-            return false; // Username đã tồn tại
+
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            return false; // Username already exists
         }
         User user = userMapper.toUser(request);
         user.setUsername(request.getUsername());
@@ -50,13 +51,15 @@ public class UserService {
     }
 
     public boolean validateUser(String username, String rawPassword) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user != null && passwordEncoder.matches(rawPassword, user.getPassword());
     }
 
     // Phương thức getUserId thêm vào
     public String getUserId(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user != null ? String.valueOf(user.getId()) : null;  // Chuyển đổi Long thành String
     }
 
@@ -67,18 +70,21 @@ public class UserService {
 
     // Phương thức lấy thông tin role của người dùng
     public String getUserRole(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user != null ? user.getRole().name() : null; // Trả về tên của enum dưới dạng chuỗi
     }
 
     public String getUserStatus(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user != null ? user.getStatus().name() : null;
     }
 
     // Phương thức cấm người dùng
     public boolean banUser(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (user != null) {
             user.setStatus(UserStatus.BANNED); // Cập nhật trạng thái thành BANNED
             userRepository.save(user);
@@ -89,7 +95,8 @@ public class UserService {
 
     // Phương thức kích hoạt người dùng
     public boolean activateUser(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (user != null) {
             user.setStatus(UserStatus.ACTIVE); // Cập nhật trạng thái thành ACTIVE
             userRepository.save(user);

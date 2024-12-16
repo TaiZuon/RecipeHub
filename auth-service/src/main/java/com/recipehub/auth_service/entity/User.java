@@ -1,14 +1,13 @@
 package com.recipehub.auth_service.entity;
 
+import com.recipehub.auth_service.Enum.UserRole;
 import jakarta.persistence.*;
 
-import com.recipehub.auth_service.entity.UserStatus;
+import com.recipehub.auth_service.Enum.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder

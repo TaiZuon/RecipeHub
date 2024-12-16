@@ -1,15 +1,9 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Layout, Card, Input, Row, Col, Button, Select, Radio } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
 import { getRecipes } from "../service/recipeService";
-
-const { Content, Footer } = Layout;
-const { Search } = Input;
-const { Option } = Select;
+import axios from "axios";
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -26,12 +20,10 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   const loadRecipes = async (page) => {
-    console.log(`loading recipes for page ${page}`);
     setLoading(true);
     try {
       const response = await getRecipes(page, 6);
       const data = response?.data?.data || [];
-      console.log(data);
       setTotalPages(response?.data?.totalPages || 0);
       setRecipes((prevRecipes) => [...prevRecipes, ...data]);
       setHasMore(data.length > 0);
@@ -67,7 +59,6 @@ const HomePage = () => {
           modelType: searchMethod,
         });
         const result = response.data;
-        console.log("hihih" + result);
         const recipe = {
           title: dishName,
           ingredients: result.Ingredients,
@@ -99,102 +90,143 @@ const HomePage = () => {
   );
 
   return (
-    <Layout>
+    <div className="min-h-screen flex flex-col">
       <AppHeader />
-      <Content style={{ padding: "20px" }}>
-        <Input.Group compact style={{ marginBottom: "20px" }}>
-          <Radio.Group
-            value={searchMethod}
-            onChange={(e) => {
-              setSearchMethod(e.target.value);
-              setRecipes([]);
-            }}
-            style={{ marginRight: "20px" }}
-          >
-            <Radio.Button value="dishName">Tìm theo tên món ăn</Radio.Button>
-            <Radio.Button value="decision_tree">Decision Tree</Radio.Button>
-            <Radio.Button value="naive_bayes">Naive Bayes</Radio.Button>
-            <Radio.Button value="knn">KNN</Radio.Button>
-          </Radio.Group>
-          <Search
-            placeholder="Nhập tên món ăn..."
-            onSearch={onSearch}
-            enterButton
-            style={{ width: "50%" }}
-            value={dishName}
-            onChange={(e) => setDishName(e.target.value)}
-          />
-        </Input.Group>
-        <Row gutter={[16, 16]}>
+      <main className="flex-1 p-5">
+        <div className="mb-5 flex flex-col md:flex-row items-center gap-4">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="dishName"
+                value="dishName"
+                checked={searchMethod === "dishName"}
+                onChange={(e) => {
+                  setSearchMethod(e.target.value);
+                  setRecipes([]);
+                }}
+                className="mr-2"
+              />
+              <label htmlFor="dishName" className="text-sm">Tìm theo tên món ăn</label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="decision_tree"
+                value="decision_tree"
+                checked={searchMethod === "decision_tree"}
+                onChange={(e) => {
+                  setSearchMethod(e.target.value);
+                  setRecipes([]);
+                }}
+                className="mr-2"
+              />
+              <label htmlFor="decision_tree" className="text-sm">Decision Tree</label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="naive_bayes"
+                value="naive_bayes"
+                checked={searchMethod === "naive_bayes"}
+                onChange={(e) => {
+                  setSearchMethod(e.target.value);
+                  setRecipes([]);
+                }}
+                className="mr-2"
+              />
+              <label htmlFor="naive_bayes" className="text-sm">Naive Bayes</label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="knn"
+                value="knn"
+                checked={searchMethod === "knn"}
+                onChange={(e) => {
+                  setSearchMethod(e.target.value);
+                  setRecipes([]);
+                }}
+                className="mr-2"
+              />
+              <label htmlFor="knn" className="text-sm">KNN</label>
+            </div>
+          </div>
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Nhập tên món ăn..."
+              value={dishName}
+              onChange={(e) => setDishName(e.target.value)}
+              className="w-full border border-gray-300 rounded p-2"
+            />
+            <button
+              onClick={onSearch}
+              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Tìm kiếm
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading ? (
             <p>Đang tải...</p>
           ) : Array.isArray(recipes) && recipes.length > 0 ? (
             recipes.map((recipe, index) => {
               if (recipes.length === index + 1) {
                 return (
-                  <Col
-                    span={8}
+                  <div
                     key={recipe.title}
                     ref={lastPostElementCallback}
+                    className="border p-4 rounded shadow"
                   >
                     {searchMethod === "dishName" ? (
                       <RecipeCard recipe={recipe} />
                     ) : (
-                      <Card
-                        title={recipe.title}
-                        extra={
-                          <Link to={`/recipe/${recipe.title}`}>
-                            Xem chi tiết
-                          </Link>
-                        }
-                      >
-                        <h3>Nguyên liệu:</h3>
-                        <ul>
+                      <div>
+                        <h2 className="text-lg font-bold">{recipe.title}</h2>
+                        <h3 className="mt-2 font-semibold">Nguyên liệu:</h3>
+                        <ul className="list-disc list-inside">
                           {(recipe.ingredients || []).map((ingredient, i) => (
                             <li key={i}>{ingredient}</li>
                           ))}
                         </ul>
-                        <h3>Hướng dẫn:</h3>
+                        <h3 className="mt-2 font-semibold">Hướng dẫn:</h3>
                         <p>{recipe.instructions || "Không có hướng dẫn"}</p>
-                      </Card>
+                      </div>
                     )}
-                  </Col>
+                  </div>
                 );
               } else {
                 return (
-                  <Col span={8} key={recipe.title}>
+                  <div key={recipe.title} className="border p-4 rounded shadow">
                     {searchMethod === "dishName" ? (
                       <RecipeCard recipe={recipe} />
                     ) : (
-                      <Card
-                        title={recipe.title}
-                        extra={
-                          <Link to={`/recipe/${recipe.title}`}>
-                            Xem chi tiết
-                          </Link>
-                        }
-                      >
-                        <h3>Nguyên liệu:</h3>
-                        <ul>
+                      <div>
+                        <h2 className="text-lg font-bold">{recipe.title}</h2>
+                        <h3 className="mt-2 font-semibold">Nguyên liệu:</h3>
+                        <ul className="list-disc list-inside">
                           {(recipe.ingredients || []).map((ingredient, i) => (
                             <li key={i}>{ingredient}</li>
                           ))}
                         </ul>
-                        <h3>Hướng dẫn:</h3>
+                        <h3 className="mt-2 font-semibold">Hướng dẫn:</h3>
                         <p>{recipe.instructions || "Không có hướng dẫn"}</p>
-                      </Card>
+                      </div>
                     )}
-                  </Col>
+                  </div>
                 );
               }
             })
           ) : (
             <p>Không có công thức nào để hiển thị.</p>
           )}
-        </Row>
-      </Content>
-      <Footer style={{ textAlign: "center" }}>©2024 RecipeHub</Footer>
-    </Layout>
+        </div>
+      </main>
+      <footer className="text-center py-4 border-t">©2024 RecipeHub</footer>
+    </div>
   );
 };
 

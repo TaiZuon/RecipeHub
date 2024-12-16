@@ -11,6 +11,8 @@ import AddIngredientPage from "./pages/AddIngredientPage";
 import "./App.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import { Chat } from "./pages/chat/Chat";
+import { ChatLayout } from "./components/layout/ChatLayout";
 
 const App = () => {
   return (
@@ -56,6 +58,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+                path="/chat"
+                element={
+                    <ChatLayout>
+                      <Chat />
+                    </ChatLayout>
+                }
+              />
       </Routes>
     </Router>
   );

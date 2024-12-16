@@ -1,45 +1,35 @@
 import React, { useState } from "react";
-import { Layout, Form, Input, Button, message } from "antd";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import moment from "moment";
-
-const { Header, Content, Footer } = Layout;
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const onFinish = async (values) => {
+  const onFinish = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const values = Object.fromEntries(formData.entries());
+
     const { username, password, fullName, dob, city } = values;
-
     const formattedDob = moment(dob).format("YYYY-MM-DD");
-
-    const requestData = {
-      username,
-      password,
-      role: "USER",
-      fullName,
-      dob,
-      city,
-    };
 
     try {
       setLoading(true);
-      console.log(dob);
       const response = await axios.post(
         "http://localhost:8080/api/auth/register",
-        { username, password, role: "USER", fullName, dob, city }
+        { username, password, fullName, role: "USER", dob: formattedDob, city }
       );
 
-      message.success("Đăng ký thành công!");
+      alert("Đăng ký thành công!");
       console.log("Response: ", response.data);
       navigate("/login");
     } catch (error) {
-      // Chỉ render thông tin cụ thể từ đối tượng error
       const errorMessage =
         error.response?.data?.message || "Đăng ký không thành công!";
-      message.error(errorMessage);
+      alert(errorMessage);
       console.error("Error: ", error);
     } finally {
       setLoading(false);
@@ -47,70 +37,116 @@ const RegisterPage = () => {
   };
 
   return (
-    <Layout>
-      <Header style={{ color: "white", textAlign: "center" }}>
-        <div style={{ color: "white", fontSize: "20px" }}>
-          <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-            RecipeHub
-          </Link>
-        </div>
-      </Header>
-      <Content style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
-        <Form
-          layout="vertical" // Label hiển thị trên các ô nhập
-          onFinish={onFinish}
-          style={{ maxWidth: "600px", margin: "0 auto" }}
-          name="register"
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* Header */}
+      <header className="bg-blue-600 text-white text-center py-4">
+        <h1 className="text-2xl font-semibold">
+          <Link to="/">RecipeHub</Link>
+        </h1>
+      </header>
+
+      {/* Form */}
+      <main className="flex-grow flex items-center justify-center">
+        <form
+          onSubmit={onFinish}
+          className="bg-white shadow-md rounded-lg p-6 w-full max-w-md"
         >
-          <Form.Item
-            label="Tên người dùng"
-            name="username"
-            rules={[{ required: true, message: "Hãy nhập tên người dùng!" }]}
+          <h2 className="text-2xl font-bold mb-4 text-center">Đăng ký</h2>
+
+          {/* Tên người dùng */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-1">
+              Tên người dùng
+            </label>
+            <input
+              type="text"
+              name="username"
+              placeholder="Ví dụ: nguyen.duong"
+              required
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Mật khẩu */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-1">
+              Mật khẩu
+            </label>
+            <input
+              type="password"
+              name="password"
+              required
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Họ tên */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-1">
+              Họ tên
+            </label>
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Ví dụ: Nguyễn Thái Dương"
+              required
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Ngày sinh */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-1">
+              Ngày tháng năm sinh
+            </label>
+            <input
+              type="date"
+              name="dob"
+              required
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Thành phố */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-1">
+              Thành phố
+            </label>
+            <input
+              type="text"
+              name="city"
+              placeholder="Ví dụ: Hà Nội"
+              required
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Nút Đăng ký */}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+            disabled={loading}
           >
-            <Input placeholder="Ví dụ: nguyen.duong" />
-          </Form.Item>
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            rules={[{ required: true, message: "Hãy nhập mật khẩu!" }]}
-          >
-            <Input.Password placeholder="" />
-          </Form.Item>
-          <Form.Item
-            label="Họ tên"
-            name="fullName"
-            rules={[{ required: true, message: "Hãy nhập họ tên!" }]}
-          >
-            <Input placeholder="Ví dụ: Nguyễn Thái Dương" />
-          </Form.Item>
-          <Form.Item
-            label="Ngày tháng năm sinh"
-            name="dob"
-            rules={[
-              { required: true, message: "Hãy nhập ngày tháng năm sinh!" },
-            ]}
-          >
-            <Input type="date" placeholder="Ví dụ: 1998-08-21" />
-          </Form.Item>
-          <Form.Item
-            label="Thành phố"
-            name="city"
-            rules={[{ required: true, message: "Hãy nhập thành phố!" }]}
-          >
-            <Input placeholder="Ví dụ: Hà Nội" />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Đăng ký
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
-          </Form.Item>
-        </Form>
-      </Content>
-      <Footer style={{ textAlign: "center" }}>©2024 RecipeHub</Footer>
-    </Layout>
+            {loading ? "Đang xử lý..." : "Đăng ký"}
+          </button>
+
+          {/* Link Đăng nhập */}
+          <div className="mt-4 text-center">
+            <p>
+              Đã có tài khoản?{" "}
+              <Link to="/login" className="text-blue-600 hover:underline">
+                Đăng nhập
+              </Link>
+            </p>
+          </div>
+        </form>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-200 text-center py-4">
+        <p>©2024 RecipeHub</p>
+      </footer>
+    </div>
   );
 };
 

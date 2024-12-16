@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Form, Input, Button, Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
 import AppHeader from "../components/AppHeader";
 import axios from "axios";
 import fileUtils from "../utils/fileUtils";
@@ -8,12 +6,10 @@ import { jwtDecode } from "jwt-decode";
 import { getIngredients, getIngredientByName } from "../service/ingredientService";
 import { createRecipeIngredient } from "../service/recipeService";
 
-const { Content, Footer } = Layout;
-
 const AddRecipePage = () => {
   const [fileList, setFileList] = useState([]);
   const [ingredients, setIngredients] = useState([]);
-  
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -21,176 +17,142 @@ const AddRecipePage = () => {
         const response = await getIngredients();
         setIngredients(response.data);
       } catch (error) {
-        message.error("Không thể tải dữ liệu nguyên liệu!");
+        console.error("Không thể tải dữ liệu nguyên liệu!");
       }
     };
 
     fetchIngredients();
   }, []);
 
-  const handleChange = ({ fileList }) => setFileList(fileList);
+  const handleChange = (e) => setFileList(e.target.files);
 
-  const onFinish = async (values) => {
+  const onFinish = async (e) => {
+    e.preventDefault();
+    const values = new FormData(e.target);
     const token = localStorage.getItem("authToken");
-
     const decodedToken = jwtDecode(token);
     const userId = decodedToken.sub;
 
     const imageUrls = [];
 
-    // Loop through the selected files and upload them
     for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i].originFileObj;
+      const file = fileList[i];
       try {
         const imageUrl = await fileUtils.uploadImage(file, `recipes/${userId}`);
-
-        imageUrls.push({ imageUrl, isPrimary: i === 0 }); // Set the first image as primary
-        console.log("Uploaded image URL: ", imageUrl);
+        imageUrls.push({ imageUrl, isPrimary: i === 0 });
       } catch (error) {
-        message.error("Đã xảy ra lỗi khi tải lên hình ảnh!");
         console.error("Error: ", error);
         return;
       }
     }
 
-    // Construct the RecipeRequest object
     const recipeRequest = {
-      title: values.title,
-      description: values.description,
+      title: values.get("title"),
+      description: values.get("description"),
       createdBy: userId,
       status: "PENDING",
       imageUrls,
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:8082/api/recipes",
-        recipeRequest
-      );
-        // Gọi API để tạo RecipeIngredient cho từng nguyên liệu đã chọn
-      console.log(response)
+      const response = await axios.post("http://localhost:8082/api/recipes", recipeRequest);
       for (const ingredient of selectedIngredients) {
-        // console.log(ingredient);
         const ingredientResponse = await getIngredientByName(ingredient);
-
-        const recipeIngredient = { recipeId: response.data.id, ingredientId: ingredientResponse.data.id};
-        console.log(recipeIngredient);
+        const recipeIngredient = { recipeId: response.data.id, ingredientId: ingredientResponse.data.id };
         await createRecipeIngredient(recipeIngredient);
       }
-      message.success("Công thức đã được thêm thành công!");
       console.log("Received values: ", response.data);
     } catch (error) {
-      message.error("Đã xảy ra lỗi khi thêm công thức!");
       console.error("Error: ", error);
     }
   };
-  const [form] = Form.useForm();
-  // State để quản lý danh sách nguyên liệu đã chọn
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
 
-  // Hàm thêm nguyên liệu vào danh sách
-  const handleAddIngredient = async (ingredient) => {
+  const handleAddIngredient = (ingredient) => {
     if (!selectedIngredients.includes(ingredient)) {
-      setSelectedIngredients((prev) => [...prev, ingredient]); // Thêm nguyên liệu mới     
+      setSelectedIngredients((prev) => [...prev, ingredient]);
     }
   };
 
-  // Hàm xóa nguyên liệu khỏi danh sách
   const handleRemoveIngredient = (ingredient) => {
-    setSelectedIngredients((prev) =>
-      prev.filter((item) => item !== ingredient)
-    );
+    setSelectedIngredients((prev) => prev.filter((item) => item !== ingredient));
   };
 
-  useEffect(() => {
-    form.setFieldsValue({ ingredients: selectedIngredients });
-  }, [selectedIngredients]);
-
-  const isIngredientSelected = (ingredient) =>
-    selectedIngredients.includes(ingredient);
-
   return (
-    <Layout>
+    <div className="min-h-screen flex flex-col">
       <AppHeader />
-      <Content style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-        <h1 style={{ textAlign: "center" }}>Thêm công thức</h1>
-        <Form form={form} name="add-recipe" onFinish={onFinish}>
-          <Form.Item
-            name="title"
-            rules={[{ required: true, message: "Hãy nhập tên công thức!" }]}
-          >
-            <Input placeholder="Tên công thức" />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            rules={[{ required: true, message: "Hãy nhập mô tả!" }]}
-          >
-            <Input.TextArea placeholder="Mô tả công thức" rows={4} />
-          </Form.Item>
-
-          <Form.Item
-            name="ingredients"
-            rules={[{ required: true, message: "Hãy chọn nguyên liệu!" }]}
-          >
-            <div>
-              <h3>Nguyên liệu đã chọn:</h3>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                {selectedIngredients.map((ingredient) => (
-                  <Button
-                    key={ingredient}
-                    onClick={() => handleRemoveIngredient(ingredient)}
-                    type="primary"
-                    danger
-                  >
-                    {ingredient} ✕
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </Form.Item>
+      <main className="flex-grow p-4 max-w-md mx-auto">
+        <h1 className="text-center text-2xl mb-4">Thêm công thức</h1>
+        <form onSubmit={onFinish} className="space-y-4">
           <div>
-            <h3>Nguyên liệu:</h3>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-              {ingredients.map((ingredient) => (
-                <Button
-                  key={ingredient.id}
-                  onClick={() => handleAddIngredient(ingredient.name)}
-                  style={{
-                    visibility: selectedIngredients.includes(ingredient)
-                      ? "hidden"
-                      : "visible",
-                  }}
+            <label className="block mb-1">Tên công thức</label>
+            <input
+              type="text"
+              name="title"
+              required
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Mô tả</label>
+            <textarea
+              name="description"
+              required
+              className="w-full p-2 border rounded"
+              rows="4"
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Nguyên liệu đã chọn</label>
+            <div className="flex flex-wrap gap-2">
+              {selectedIngredients.map((ingredient) => (
+                <button
+                  key={ingredient}
+                  type="button"
+                  onClick={() => handleRemoveIngredient(ingredient)}
+                  className="bg-red-500 text-white px-2 py-1 rounded"
                 >
-                  {ingredient.name}
-                </Button>
+                  {ingredient} ✕
+                </button>
               ))}
             </div>
           </div>
-
-          <Form.Item
-            name="images"
-            rules={[{ required: true, message: "Hãy chọn hình ảnh!" }]}
-          >
-            <Upload
+          <div>
+            <label className="block mb-1">Nguyên liệu</label>
+            <div className="flex flex-wrap gap-2">
+              {ingredients.map((ingredient) => (
+                <button
+                  key={ingredient.id}
+                  type="button"
+                  onClick={() => handleAddIngredient(ingredient.name)}
+                  className={`px-2 py-1 rounded ${selectedIngredients.includes(ingredient.name) ? "bg-gray-300" : "bg-blue-500 text-white"}`}
+                >
+                  {ingredient.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block mb-1">Hình ảnh</label>
+            <input
+              type="file"
+              name="images"
               multiple
-              listType="picture"
-              fileList={fileList}
               onChange={handleChange}
-              beforeUpload={() => false}
-            >
-              <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Thêm công thức
-            </Button>
-          </Form.Item>
-        </Form>
-      </Content>
-      <Footer style={{ textAlign: "center" }}>©2024 RecipeHub</Footer>
-    </Layout>
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded"
+          >
+            Thêm công thức
+          </button>
+        </form>
+      </main>
+      <footer className="bg-gray-800 text-white text-center py-4">
+        ©2024 RecipeHub
+      </footer>
+    </div>
   );
 };
 

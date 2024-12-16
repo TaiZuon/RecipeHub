@@ -26,8 +26,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserCreationRequest request) {
 
-        if (request.getUsername() == null || request.getPassword() == null || request.getRole() == null) {
-            return ResponseEntity.badRequest().body("Username, Password và Role là bắt buộc");
+        if (request.getUsername() == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().body("Username, Password là bắt buộc");
         }
 
         boolean success = userService.registerUser(request);
