@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 
-export const useWebSocket = (userId, onMessageReceived, onChatMessageReceived) => {
+export const useWebSocket = (userId,  onChatMessageReceived) => {
     const clientRef = useRef(null);
     const mountedRef = useRef(true);
 
@@ -17,7 +17,7 @@ export const useWebSocket = (userId, onMessageReceived, onChatMessageReceived) =
             }
             console.log("[WebSocket] Connected successfully. User:", userId);
 
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 console.warn("ws connection aborted: Missing token");
                 return;
@@ -55,15 +55,15 @@ export const useWebSocket = (userId, onMessageReceived, onChatMessageReceived) =
                     //     onChatMessageReceived(chatMessage);
                     // });
                     // Subscribe to notifications
-                    client.subscribe('/user/queue/notifications', (message) => {
-                        try {
-                            console.log("[WebSocket] Notification received:", message.body);
-                            const notification = JSON.parse(message.body);
-                            onMessageReceived(notification);
-                        } catch (error) {
-                            console.error("[WebSocket] Failed to process notification:", error);
-                        }
-                    });
+                    // client.subscribe('/user/queue/notifications', (message) => {
+                    //     try {
+                    //         console.log("[WebSocket] Notification received:", message.body);
+                    //         const notification = JSON.parse(message.body);
+                    //         onMessageReceived(notification);
+                    //     } catch (error) {
+                    //         console.error("[WebSocket] Failed to process notification:", error);
+                    //     }
+                    // });
 
                     // Subscribe to messages
                     client.subscribe('/user/queue/messages', (message) => {
@@ -92,5 +92,5 @@ export const useWebSocket = (userId, onMessageReceived, onChatMessageReceived) =
             mountedRef.current = false;
             clientRef.current?.deactivate();
         };
-    }, [userId, onMessageReceived, onChatMessageReceived]);
+    }, [userId, onChatMessageReceived]);
 };

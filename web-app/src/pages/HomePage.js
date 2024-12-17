@@ -19,26 +19,46 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
-  const loadRecipes = async (page) => {
-    setLoading(true);
+  // const loadRecipes = async (page) => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await getRecipes(page, 6);
+  //     const data = response?.data?.data || [];
+  //     setTotalPages(response?.data?.totalPages || 0);
+  //     setRecipes((prevRecipes) => [...prevRecipes, ...data]);
+  //     setHasMore(data.length > 0);
+  //   } catch (error) {
+  //     if (error.response?.status === 401) {
+  //       navigate("/login");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  useEffect(() => {
+      fetchPendingRecipes();
+    }, []);
+
+  const fetchPendingRecipes = async () => {
     try {
-      const response = await getRecipes(page, 6);
-      const data = response?.data?.data || [];
-      setTotalPages(response?.data?.totalPages || 0);
-      setRecipes((prevRecipes) => [...prevRecipes, ...data]);
-      setHasMore(data.length > 0);
+      setLoading(true);
+      const response = await axios.get("http://localhost:8082/api/recipes/status", {
+        params: { status: "APPROVED" }
+      });
+      setRecipes(response.data);
+      console.log(recipes)
     } catch (error) {
-      if (error.response?.status === 401) {
-        navigate("/login");
-      }
+      console.error("Error fetching pending recipes:", error);
+      // alert("Error fetching pending recipes");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadRecipes(page);
-  }, [page]);
+  // useEffect(() => {
+  //   loadRecipes(page);
+  // }, [page]);
 
   const onSearch = async () => {
     if (!dishName) {
@@ -167,8 +187,18 @@ const HomePage = () => {
               Tìm kiếm
             </button>
           </div>
+          <div className="flex gap-4">
+            <button onClick={() => navigate("/add-recipe")}
+            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+              Add Recipe
+            </button>
+            <button onClick={() => navigate("/add-ingredient")}
+            className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
+              Add Ingredient
+            </button>
+          </div>
         </div>
-
+                
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading ? (
             <p>Đang tải...</p>

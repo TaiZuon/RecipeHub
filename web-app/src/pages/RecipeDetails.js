@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRecipe } from "../service/recipeService";
 import { getUserById } from "../service/userService";
 import { jwtDecode } from "jwt-decode";
 import { chatService } from "../service/chatService";
-
+import { Comments } from "./Comments";
+import WebSocketService from "../service/WebSocketService";
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -12,9 +13,14 @@ const RecipeDetails = () => {
   const [loading, setLoading] = useState(true);
   const [creator, setCreator] = useState(null);
   const navigate = useNavigate();
+  const [comments, setComments] = useState([])
   const token = localStorage.getItem("authToken");
   const decodedToken = jwtDecode(token);
-  const currentUserId = decodedToken.sub;
+  const currentUserId = Number(decodedToken.sub);
+
+  const commentWebSocketUrl = 'http://localhost:8085/ws'; // WebSocket URL for comment service
+  const webSocketService = new WebSocketService(commentWebSocketUrl); 
+
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -22,12 +28,11 @@ const RecipeDetails = () => {
         const response = await getRecipe(id);
         if (response?.data) {
           setRecipe(response.data);
-
+          // console.log("hihi"+ recipe);
           const creatorResponse = await getUserById(response.data.createdBy);
           if (creatorResponse?.data) {
             setCreator(creatorResponse.data);
           }
-          // console.log(response.data);
         }
       } catch (error) {
         console.error("Không thể tải dữ liệu công thức!", error);
@@ -38,6 +43,47 @@ const RecipeDetails = () => {
 
     fetchRecipe();
   }, [id]);
+
+
+  useEffect(() => {
+    webSocketService.connect(
+      {},
+      () => {
+        console.log('Connected to WebSocket');
+        // Subscribe to the comment topic
+        const commentSubscription = webSocketService.subscribe(
+          `/topic/recipe-comments/${id}`,
+          handleCommentWebSocketEvent
+        );
+
+        return () => {
+          commentSubscription.unsubscribe();
+          webSocketService.disconnect();
+        };
+      },
+      (error) => console.error('WebSocket connection error:', error)
+    );
+  }, [id]);
+
+  const handleCommentWebSocketEvent = async (event) => {
+    switch (event.action) {
+      case 'create':
+        console.log("create event" + JSON.stringify(event.data))
+        setComments((prev) => [event.data, ...prev]);
+        console.log(comments)
+        break;
+      case 'update':
+        setComments((prev) =>
+          prev.map((c) => (c.id === event.data.id ? event.data : c))
+        );
+        break;
+      case 'delete':
+        setComments((prev) => prev.filter((c) => c.id !== event.data.id));
+        break;
+      default:
+        console.warn('Unknown event type:', event.type);
+    }
+  };
 
   const handleChatClick = async () => {
     try {
@@ -98,6 +144,13 @@ const RecipeDetails = () => {
               Chat
             </button>
           </div>
+          <Comments
+          recipeId={recipe.id}
+          userId={currentUserId}
+          setShowLoginModal={() => navigate("/login")}
+          comments={comments}
+          setComments={setComments}
+        />
       </main>
 
       <footer className="bg-gray-800 text-white py-4 text-center">

@@ -26,7 +26,7 @@ const Messages = ({
     const PAGE_SIZE = 20;
     const token = localStorage.getItem("authToken");
       const decodedToken = jwtDecode(token);
-      const userId = decodedToken.sub;
+      const userId = Number(decodedToken.sub);
 
     // Auto scroll to bottom when new messages arrive
     useEffect(() => {

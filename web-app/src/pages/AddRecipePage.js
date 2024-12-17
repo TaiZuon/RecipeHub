@@ -60,8 +60,10 @@ const AddRecipePage = () => {
         const ingredientResponse = await getIngredientByName(ingredient);
         const recipeIngredient = { recipeId: response.data.id, ingredientId: ingredientResponse.data.id };
         await createRecipeIngredient(recipeIngredient);
+        alert("Nguyên liệu đã được thêm thành công!");
       }
-      console.log("Received values: ", response.data);
+      // console.log("Received values: ", response.data);
+      alert("Công thức đã được thêm thành công!");
     } catch (error) {
       console.error("Error: ", error);
     }

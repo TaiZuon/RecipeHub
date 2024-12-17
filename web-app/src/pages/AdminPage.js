@@ -42,6 +42,7 @@ const AdminPage = () => {
         params: { status: "PENDING" }
       });
       setRecipes(response.data);
+      console.log(recipes)
     } catch (error) {
       console.error("Error fetching pending recipes:", error);
       // alert("Error fetching pending recipes");
@@ -52,7 +53,7 @@ const AdminPage = () => {
 
   const handleApprove = async (recipeId) => {
     try {
-      await axios.post(`http://localhost:8082/api/recipes/${recipeId}/approve`);
+      await axios.put(`http://localhost:8082/api/recipes/${recipeId}/approve`);
       alert("Recipe approved successfully");
       fetchPendingRecipes();
     } catch (error) {
@@ -63,7 +64,7 @@ const AdminPage = () => {
 
   const handleReject = async (recipeId) => {
     try {
-      await axios.post(`http://localhost:8082/api/recipes/${recipeId}/reject`);
+      await axios.put(`http://localhost:8082/api/recipes/${recipeId}/reject`);
       alert("Recipe rejected successfully");
       fetchPendingRecipes();
     } catch (error) {
@@ -89,54 +90,6 @@ const AdminPage = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  // Cấu hình cột cho bảng
-  // const columns = [
-  //   {
-  //     title: "ID",
-  //     dataIndex: "id",
-  //     key: "id",
-  //   },
-  //   {
-  //     title: "Tên người dùng",
-  //     dataIndex: "username",
-  //     key: "username",
-  //   },
-  //   {
-  //     title: "Vai trò",
-  //     dataIndex: "role",
-  //     key: "role",
-  //   },
-  //   {
-  //     title: "Trạng thái",
-  //     dataIndex: "status",
-  //     key: "status",
-  //     render: (status) => (status === "ACTIVE" ? "Hoạt động" : "Bị cấm"),
-  //   },
-  //   {
-  //     title: "Hành động",
-  //     key: "actions",
-  //     render: (_, record) => (
-  //       <>
-  //         {record.status === "ACTIVE" ? (
-  //           <Button
-  //             type="danger"
-  //             onClick={() => handleBanUser(record.username, fetchUsers)}
-  //           >
-  //             Cấm
-  //           </Button>
-  //         ) : (
-  //           <Button
-  //             type="primary"
-  //             onClick={() => handleActivateUser(record.username, fetchUsers)}
-  //           >
-  //             Kích hoạt
-  //           </Button>
-  //         )}
-  //       </>
-  //     ),
-  //   },
-  // ];
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -178,10 +131,10 @@ const AdminPage = () => {
         
       </main>
       <header className="bg-blue-600 text-white p-4">
-        <h1 className="text-2xl">Admin - Manage Pending Recipes</h1>
+        <h1 className="text-2xl">Manage Pending Recipes</h1>
       </header>
       <main className="container mx-auto p-4">
-        {loading ? (
+      {loading ? (
           <p>Loading...</p>
         ) : (
           <table className="min-w-full bg-white">
@@ -190,27 +143,37 @@ const AdminPage = () => {
                 <th className="py-2 px-4 border-b">Image</th>
                 <th className="py-2 px-4 border-b">Title</th>
                 <th className="py-2 px-4 border-b">Description</th>
+                <th className="py-2 px-4 border-b">Created By</th>
+                <th className="py-2 px-4 border-b">Created At</th>
+                <th className="py-2 px-4 border-b">Updated At</th>
+                <th className="py-2 px-4 border-b">Status</th>
                 <th className="py-2 px-4 border-b">Actions</th>
               </tr>
             </thead>
             <tbody>
               {recipes.map((recipe) => (
-                <tr key={recipe.id}>
+                <tr key={recipe.recipeId}>
                   <td className="py-2 px-4 border-b">
-                    <img className="w-20 h-20 rounded-md" src={recipe.recipeImages} alt="Item" />
+                    {recipe.recipeImages.map((image, index) => (
+                      <img key={index} className="w-20 h-20 rounded-md" src={image.imageUrl} alt="Item" />
+                    ))}
                   </td>
                   <td className="py-2 px-4 border-b">{recipe.title}</td>
                   <td className="py-2 px-4 border-b">{recipe.description}</td>
+                  <td className="py-2 px-4 border-b">{recipe.createdBy}</td>
+                  <td className="py-2 px-4 border-b">{new Date(recipe.createdAt).toLocaleString()}</td>
+                  <td className="py-2 px-4 border-b">{new Date(recipe.updatedAt).toLocaleString()}</td>
+                  <td className="py-2 px-4 border-b">{recipe.status}</td>
                   <td className="py-2 px-4 border-b">
                     <button
                       className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-                      onClick={() => handleApprove(recipe.id)}
+                      onClick={() => handleApprove(recipe.recipeId)}
                     >
                       Approve
                     </button>
                     <button
                       className="bg-red-500 text-white px-4 py-2 rounded"
-                      onClick={() => handleReject(recipe.id)}
+                      onClick={() => handleReject(recipe.recipeId)}
                     >
                       Reject
                     </button>

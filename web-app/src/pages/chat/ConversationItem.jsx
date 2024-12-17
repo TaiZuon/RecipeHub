@@ -7,8 +7,8 @@ const ConversationItem = ({ room, isActive, onSelect, onDelete }) => {
     const dropdownRef = useRef(null);
     const token = localStorage.getItem("authToken");
     const decodedToken = jwtDecode(token);
-    const currentUserId = decodedToken.sub;
-
+    const currentUserId = Number(decodedToken.sub);
+    // console.log(currentUserId)
     const getTimeString = (timestamp) => {
         if (!timestamp) return '';
         const date = new Date(timestamp);
@@ -32,7 +32,7 @@ const ConversationItem = ({ room, isActive, onSelect, onDelete }) => {
     };
 
     const getOtherParticipant = () => {
-        return room.user1.id === currentUserId ? room.user2 : room.user1;
+        return room.user1.id === Number(currentUserId) ? room.user2 : room.user1;
     };
 
     const isUnreadMessage = () => {
@@ -66,10 +66,10 @@ const ConversationItem = ({ room, isActive, onSelect, onDelete }) => {
 
     const otherParticipant = getOtherParticipant();
     const unread = isUnreadMessage();
-    console.log(otherParticipant)
+    // console.log(otherParticipant)
     const handleDeleteRoom = async (e) => {
         try {
-            await onDelete(room.id);
+            await onDelete(room.id, currentUserId);
             setShowDropdown(false);
         } catch (error) {
             console.error('Error deleting conversation:', error);

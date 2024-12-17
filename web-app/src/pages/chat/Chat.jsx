@@ -14,7 +14,7 @@ export const Chat = () => {
     const [messages, setMessages] = useState([]);
     const token = localStorage.getItem("authToken");
       const decodedToken = jwtDecode(token);
-      const currentUserId = decodedToken.sub;
+      const currentUserId = Number(decodedToken.sub);
     const stompClientRef = useRef(null);
     const messagesEndRef = useRef(null);
 
