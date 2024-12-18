@@ -1,22 +1,22 @@
 package com.recipehub.auth_service.dto.request;
 
+
+import com.recipehub.auth_service.Enum.UserRole;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    private String username;
-    private String password;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    String username;
+    String password;
+    String fullName;
+    UserRole role;
+    LocalDate dob;
+    String city;
 }

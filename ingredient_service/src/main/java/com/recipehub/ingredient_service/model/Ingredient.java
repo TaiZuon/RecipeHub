@@ -1,10 +1,14 @@
 package com.recipehub.ingredient_service.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.recipehub.ingredient_service.Enum.UnitType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -15,18 +19,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Ingredient {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID ingredientId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "quantity", nullable = false)
-    private BigDecimal quantity;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UnitType unit;
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<IngredientImage> ingredientImages;
 
 }
 
