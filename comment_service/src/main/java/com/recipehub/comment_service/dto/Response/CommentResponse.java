@@ -12,10 +12,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentResponse {
-    UUID id;
-    UUID recipeId;
-    UUID userId;
-    String userName;
+    Long id;
+    Long recipeId;
+    Long userId;
     String content;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

@@ -19,13 +19,11 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", nullable = false)
-    private Recipe recipe;
+    @Column(name = "recipe_id", nullable = false)
+    private Long recipeId; // Chỉ lưu recipeId từ Recipe Service
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId; // Chỉ lưu userId từ User Service
 
     @Column(nullable = false)
     private String content;

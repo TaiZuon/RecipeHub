@@ -1,4 +1,4 @@
-package com.recipehub.auth_service.config;
+package com.recipehub.comment_service.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

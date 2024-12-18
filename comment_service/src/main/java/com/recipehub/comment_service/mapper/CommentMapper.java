@@ -12,8 +12,8 @@ public class CommentMapper {
     public static CommentDto commentToCommentDto(Comment comment){
         return CommentDto.builder()
                 .id(comment.getId())
-                .userId(comment.getUser().getId())
-                .auctionId(comment.getRecipe().getId())
+                .userId(comment.getUserId())
+                .recipeId(comment.getRecipeId())
                 .content(comment.getContent())
                 .createAt(comment.getCreatedAt())
                 .updateAt(comment.getUpdatedAt())
@@ -23,9 +23,8 @@ public class CommentMapper {
     public static CommentResponse commentToCommentResponse(Comment comment) {
         return CommentResponse.builder()
                 .id(comment.getId())
-                .auctionId(comment.getRecipe().getId())
-                .userId(comment.getUser().getId())
-                .userName(comment.getUser().getUserName)
+                .recipeId(comment.getRecipeId())
+                .userId(comment.getUserId())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())

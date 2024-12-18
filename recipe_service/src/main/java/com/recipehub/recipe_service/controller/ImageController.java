@@ -21,7 +21,7 @@ public class ImageController {
     private final ImageService imageService;
     private final AmazonS3Service amazonS3Service;
 
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/presigned-url")
     public ResponseEntity<PreSignedUrlResponse> getPresignedUrl(
             @RequestParam String folder,

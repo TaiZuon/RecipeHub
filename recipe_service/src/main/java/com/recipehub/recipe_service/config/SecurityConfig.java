@@ -9,10 +9,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Tắt CSRF
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); // Tắt xác thực
+                .csrf().disable() // Tắt CSRF nếu bạn đang phát triển API RESTful
+                .authorizeRequests()
+                .requestMatchers("/api/recipes/*").permitAll(); // Thay antMatchers bằng requestMatchers
+//                .anyRequest().authenticated(); // Các endpoint khác yêu cầu xác thực
         return http.build();
     }
 }

@@ -1,4 +1,4 @@
-package com.recipehub.recipe_service.Enum;
+package com.recipehub.comment_service.Enum;
 
 public enum RecipeStatus {
     PENDING,

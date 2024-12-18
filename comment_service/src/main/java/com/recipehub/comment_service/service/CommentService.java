@@ -10,8 +10,8 @@ import java.util.List;
 public interface CommentService {
     Comment getCommentById(Long id);
     Comment addComment(CommentCreateRequest request) throws Exception;
-    public Page<Comment> getCommentsByAuctionId(Long auctionId, int size, int page, String sortBy, String sortDirection);
-    List<Comment> getCommentsByUser(Long userId) throws Exception;
+    public Page<Comment> getCommentsByRecipeId(Long auctionId, int size, int page, String sortBy, String sortDirection);
+//    List<Comment> getCommentsByUser(Long userId) throws Exception;
     Comment updateComment(Long commentId, UpdateCommentRequest request) throws Exception;
     void deleteComment(Long commentId);
 }

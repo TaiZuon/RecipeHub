@@ -1,6 +1,6 @@
-package com.recipehub.recipe_service.dto;
+package com.recipehub.comment_service.dto;
 
-import com.recipehub.recipe_service.Enum.RecipeStatus;
+import com.recipehub.comment_service.Enum.RecipeStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

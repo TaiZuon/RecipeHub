@@ -30,7 +30,7 @@ public class CommentController {
         try {
             Comment savedComment = commentService.addComment(comment);
             CommentResponse commentResponse = CommentMapper.commentToCommentResponse(savedComment);
-            messagingTemplate.convertAndSend("/topic/recipe-comments/" + comment.RecipeId(),
+            messagingTemplate.convertAndSend("/topic/recipe-comments/" + comment.getRecipeId(),
                     new CommentEvent("create", commentResponse));
             return ResponseEntity.ok(commentResponse);
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public class CommentController {
         try {
             Comment newComment = commentService.updateComment(commentId, request);
 
-            messagingTemplate.convertAndSend("/topic/recipe-comments/" + newComment.getRecipe().getId(),
+            messagingTemplate.convertAndSend("/topic/recipe-comments/" + newComment.getRecipeId(),
                     new CommentEvent("update", CommentMapper.commentToCommentResponse(newComment)));
             return ResponseEntity.ok("Update comment successfully");
         } catch (Exception e) {
@@ -75,7 +75,7 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     public void deleteComment(@PathVariable Long commentId) {
-        Long recipeId = commentService.getCommentById(commentId).getRecipe().getId();
+        Long recipeId = commentService.getCommentById(commentId).getRecipeId();
         commentService.deleteComment(commentId);
         // Phát sự kiện "delete" qua WebSocket
         messagingTemplate.convertAndSend("/topic/recipe-comments/" + recipeId,

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const RecipeCard = ({ recipe, lastPostElementCallback }) => {
   return (
-    <div className="w-full md:w-1/3 p-2" ref={lastPostElementCallback}>
+    <div className="w-full p-2" ref={lastPostElementCallback}>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <img
           alt={recipe.title}

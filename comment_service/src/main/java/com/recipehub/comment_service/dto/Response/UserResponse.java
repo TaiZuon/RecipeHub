@@ -1,9 +1,7 @@
-package com.recipehub.recipe_service.dto.response;
+package com.recipehub.comment_service.dto.Response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @Builder

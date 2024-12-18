@@ -1,4 +1,4 @@
-package com.recipehub.recipe_service.dto;
+package com.recipehub.comment_service.dto;
 
 import lombok.Builder;
 import lombok.Data;

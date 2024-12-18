@@ -1,4 +1,4 @@
-package com.recipehub.auth_service.security;
+package com.recipehub.comment_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

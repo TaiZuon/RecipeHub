@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>comment_service</artifactId>
+	<artifactId>recipe_service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>comment_service</name>
+	<name>recipe_service</name>
 	<description>Project Recipe Hub using Spring Boot</description>
 	<url/>
 	<licenses>
@@ -143,11 +143,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-websocket</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>

@@ -112,28 +112,17 @@ public class RecipeController {
     }
 
     @PutMapping("/{recipeId}/approve")
-    public ResponseEntity<String> approveRecipe(@PathVariable Long recipeId, @RequestHeader("userName") String userName) {
-        // Xác minh quyền Admin từ AuthService
-        String role = authServiceClient.getUserRoles(userName);
-        if (!role.contains("ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn không có quyền thực hiện thao tác này.");
-        }
+    public ResponseEntity<String> approveRecipe(@PathVariable Long recipeId) {
         recipeService.approveRecipe(recipeId);
-        return ResponseEntity.ok("Recipe đã được duyệt.");
+        return ResponseEntity.ok("Recipe has been approved.");
     }
 
     @PutMapping("/{recipeId}/reject")
-    public ResponseEntity<String> rejectRecipe(@PathVariable Long recipeId, @RequestHeader("userName") String userName) {
-        // Xác minh quyền Admin từ AuthService
-        String role = authServiceClient.getUserRoles(userName);
-        if (!role.contains("ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn không có quyền thực hiện thao tác này.");
-        }
+    public ResponseEntity<String> rejectRecipe(@PathVariable Long recipeId ) {
         recipeService.rejectRecipe(recipeId);
-        return ResponseEntity.ok("Recipe đã bị từ chối.");
+        return ResponseEntity.ok("Recipe has been rejected.");
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/status")
     public ResponseEntity<List<RecipeResponse>> getRecipesByStatus(@RequestParam RecipeStatus status) {
         List<RecipeResponse> recipes = recipeService.getRecipesByStatus(status);
